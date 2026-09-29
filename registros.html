@@ -1,1 +1,461 @@
 
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Historial Clasificado - Métricas Zepp & Nutrición</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #0b0f19;
+      --card-bg: #111827;
+      --card-border: #1f2937;
+      --accent-blue: #38bdf8;
+      --accent-green: #10b981;
+      --accent-orange: #f97316;
+      --accent-purple: #a855f7;
+      --accent-pink: #ec4899;
+      --accent-cyan: #06b6d4;
+      --text-main: #f9fafb;
+      --text-muted: #9ca3af;
+    }
+
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+    }
+
+
+    body {
+      background-color: var(--bg);
+      color: var(--text-main);
+      padding: 24px;
+      min-height: 100vh;
+    }
+
+
+    .container {
+      max-width: 1280px;
+      margin: 0 auto;
+    }
+
+
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 24px;
+      padding-bottom: 16px;
+      border-bottom: 1px solid var(--card-border);
+      flex-wrap: wrap;
+      gap: 16px;
+    }
+
+
+    .btn-back {
+      background: rgba(56, 189, 248, 0.12);
+      color: var(--accent-blue);
+      border: 1px solid rgba(56, 189, 248, 0.3);
+      padding: 10px 18px;
+      border-radius: 10px;
+      font-weight: 700;
+      font-size: 0.88rem;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      transition: all 0.2s ease;
+    }
+
+
+    .btn-back:hover {
+      background: rgba(56, 189, 248, 0.25);
+      transform: translateY(-1px);
+    }
+
+
+    .card {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 16px;
+      padding: 24px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.25);
+      margin-bottom: 24px;
+    }
+
+
+    .filter-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-bottom: 20px;
+    }
+
+
+    .category-pills {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+
+    .pill-btn {
+      background: #0b0f19;
+      border: 1px solid var(--card-border);
+      color: var(--text-muted);
+      padding: 8px 14px;
+      border-radius: 999px;
+      font-size: 0.82rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+
+    .pill-btn:hover {
+      background: rgba(255, 255, 255, 0.05);
+      color: var(--text-main);
+    }
+
+
+    .pill-btn.active {
+      background: rgba(56, 189, 248, 0.15);
+      color: var(--accent-blue);
+      border-color: var(--accent-blue);
+    }
+
+
+    .pill-count {
+      background: rgba(255, 255, 255, 0.1);
+      padding: 2px 7px;
+      border-radius: 999px;
+      font-size: 0.72rem;
+    }
+
+
+    .search-box {
+      background: #0b0f19;
+      border: 1px solid var(--card-border);
+      color: #fff;
+      padding: 9px 14px;
+      border-radius: 10px;
+      font-size: 0.85rem;
+      width: 240px;
+    }
+
+
+    .search-box:focus {
+      outline: none;
+      border-color: var(--accent-blue);
+    }
+
+
+    .sort-btn {
+      background: #0b0f19;
+      border: 1px solid var(--card-border);
+      color: var(--text-muted);
+      padding: 9px 14px;
+      border-radius: 10px;
+      font-size: 0.82rem;
+      font-weight: 600;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+
+    .sort-btn:hover {
+      color: var(--text-main);
+    }
+
+
+    .table-responsive {
+      overflow-x: auto;
+      border-radius: 12px;
+      border: 1px solid var(--card-border);
+    }
+
+
+    .records-table {
+      width: 100%;
+      border-collapse: collapse;
+      text-align: left;
+      font-size: 0.85rem;
+    }
+
+
+    .records-table th {
+      background: #0d1322;
+      color: var(--text-muted);
+      font-size: 0.74rem;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      padding: 14px 16px;
+      border-bottom: 1px solid var(--card-border);
+      white-space: nowrap;
+    }
+
+
+    .records-table td {
+      padding: 14px 16px;
+      border-bottom: 1px solid rgba(31, 41, 55, 0.6);
+      color: var(--text-main);
+      vertical-align: middle;
+    }
+
+
+    .records-table tr:hover {
+      background: rgba(255, 255, 255, 0.02);
+    }
+
+
+    .type-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      padding: 4px 10px;
+      border-radius: 999px;
+      font-size: 0.74rem;
+      font-weight: 700;
+      white-space: nowrap;
+    }
+
+
+    .badge-nutrition { background: rgba(16, 185, 129, 0.12); color: #10b981; border: 1px solid rgba(16, 185, 129, 0.3); }
+    .badge-activity { background: rgba(56, 189, 248, 0.12); color: #38bdf8; border: 1px solid rgba(56, 189, 248, 0.3); }
+    .badge-sleep { background: rgba(168, 85, 247, 0.12); color: #a855f7; border: 1px solid rgba(168, 85, 247, 0.3); }
+    .badge-vitals { background: rgba(249, 115, 22, 0.12); color: #f97316; border: 1px solid rgba(249, 115, 22, 0.3); }
+    .badge-weight { background: rgba(6, 182, 212, 0.12); color: #06b6d4; border: 1px solid rgba(6, 182, 212, 0.3); }
+
+
+    .tag-note {
+      color: #d1d5db;
+      font-size: 0.8rem;
+      background: rgba(255, 255, 255, 0.04);
+      padding: 4px 8px;
+      border-radius: 6px;
+      display: inline-block;
+      max-width: 320px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <div>
+        <h1 style="font-size: 1.5rem; font-weight: 800;">Historial Cronológico de Registros</h1>
+        <p style="color: var(--text-muted); font-size: 0.85rem; margin-top: 2px;">Métricas de Amazfit Zepp, Health Connect & Registro Nutricional</p>
+      </div>
+      <div>
+        <a href="index.html" class="btn-back">⬅ Volver al Dashboard</a>
+      </div>
+    </header>
+
+
+    <div class="card">
+      <!-- Filter and Search Bar -->
+      <div class="filter-bar">
+        <div class="category-pills">
+          <button class="pill-btn active" onclick="filterRecords('ALL', this)">
+            <span>🌟 Todos</span> <span class="pill-count" id="countAll">0</span>
+          </button>
+          <button class="pill-btn" onclick="filterRecords('NUTRITION', this)">
+            <span>🥗 Nutrición & Déficit</span> <span class="pill-count" id="countNutrition">0</span>
+          </button>
+          <button class="pill-btn" onclick="filterRecords('ACTIVITY', this)">
+            <span>🏃 Actividad & Pasos</span> <span class="pill-count" id="countActivity">0</span>
+          </button>
+          <button class="pill-btn" onclick="filterRecords('SLEEP', this)">
+            <span>💤 Arquitectura Sueño</span> <span class="pill-count" id="countSleep">0</span>
+          </button>
+          <button class="pill-btn" onclick="filterRecords('VITALS', this)">
+            <span>❤️ Biomarcadores / FC</span> <span class="pill-count" id="countVitals">0</span>
+          </button>
+          <button class="pill-btn" onclick="filterRecords('WEIGHT', this)">
+            <span>⚖️ Composición / Peso</span> <span class="pill-count" id="countWeight">0</span>
+          </button>
+        </div>
+
+
+        <div style="display: flex; gap: 10px; align-items: center;">
+          <input type="text" id="recordSearch" class="search-box" placeholder="Buscar fecha, comida, notas..." oninput="handleSearch()">
+          <button class="sort-btn" id="btnSort" onclick="toggleSort()">
+            <span id="sortIcon">⬇️</span> <span id="sortText">Más recientes</span>
+          </button>
+        </div>
+      </div>
+
+
+      <!-- Table of Classified Records -->
+      <div class="table-responsive">
+        <table class="records-table">
+          <thead>
+            <tr>
+              <th>Fecha / Hora</th>
+              <th>Tipo / Categoría</th>
+              <th>Métricas Principales</th>
+              <th>Métricas Secundarias</th>
+              <th>Detalles / Observaciones</th>
+            </tr>
+          </thead>
+          <tbody id="recordsTableBody">
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+
+  <script>
+    const rawRecords = [
+      // Nutrición & Balance Diario
+      { date: '2026-09-28', type: 'NUTRITION', badge: 'badge-nutrition', typeLabel: '🥗 Nutrición', primary: '895 kcal ingeridas | Déficit: -640 kcal', secondary: 'Macros: 51g P | 116g C | 28g G', details: 'Almuerzo 3:45pm: Burrito pollo Melo + frijoles + queso. Snack 11:11pm: Leche + guineo' },
+      { date: '2026-09-27', type: 'NUTRITION', badge: 'badge-nutrition', typeLabel: '🥗 Nutrición', primary: '2,305 kcal ingeridas | Déficit: +95 kcal', secondary: 'Macros: 73g P | 173g C | 126g G', details: 'Festival de la Mejorana: Desayuno típico (pastelito, hojalda, 2 chorizos), chorizo en palito, 2 cervezas, McDonald’s 10 nuggets' },
+      
+      // Composición / Peso
+      { date: '2026-09-28 15:28', type: 'WEIGHT', badge: 'badge-weight', typeLabel: '⚖️ Peso', primary: '64.30 kg (141.7 lbs)', secondary: 'Promedio Móvil 7d: 64.14 kg', details: 'Fuente: Amazfit Zepp Smart Scale / Wearable' },
+      { date: '2026-09-27', type: 'WEIGHT', badge: 'badge-weight', typeLabel: '⚖️ Peso', primary: '64.50 kg', secondary: 'Promedio Móvil 7d: 64.22 kg', details: 'Registro ponderal post-evento Mejorana' },
+      { date: '2026-06-13', type: 'WEIGHT', badge: 'badge-weight', typeLabel: '⚖️ Peso', primary: '63.59 kg (140.2 lbs)', secondary: 'Descenso sostenido', details: 'Hito histórico registrado' },
+      { date: '2026-05-11', type: 'WEIGHT', badge: 'badge-weight', typeLabel: '⚖️ Peso', primary: '64.09 kg (141.3 lbs)', secondary: 'Descenso', details: 'Hito mensual' },
+      { date: '2026-04-17', type: 'WEIGHT', badge: 'badge-weight', typeLabel: '⚖️ Peso', primary: '64.23 kg (141.6 lbs)', secondary: 'Progreso', details: 'Fase inicial corte' },
+      { date: '2026-04-01', type: 'WEIGHT', badge: 'badge-weight', typeLabel: '⚖️ Peso', primary: '67.13 kg (148.0 lbs)', secondary: 'Punto de partida', details: 'Peso inicial de corte' },
+
+
+      // Actividad & Pasos (Zepp Health Connect)
+      { date: '2026-09-27', type: 'ACTIVITY', badge: 'badge-activity', typeLabel: '🏃 Actividad', primary: '11,335 pasos (Meta cumplida 🎉)', secondary: 'Gasto TDEE: 2,400 kcal', details: 'Caminata y recorrido Festival de la Mejorana' },
+      { date: '2026-09-26', type: 'ACTIVITY', badge: 'badge-activity', typeLabel: '🏃 Actividad', primary: '5,541 pasos', secondary: 'Gasto TDEE: 1,793 kcal', details: 'Actividad diaria registrada por Amazfit' },
+      { date: '2026-09-25', type: 'ACTIVITY', badge: 'badge-activity', typeLabel: '🏃 Actividad', primary: '4,679 pasos', secondary: 'Gasto TDEE: 1,744 kcal', details: 'Actividad diaria registrada por Amazfit' },
+      { date: '2026-09-06', type: 'ACTIVITY', badge: 'badge-activity', typeLabel: '🏃 Actividad', primary: '8,893 pasos | 4,929 m', secondary: '1,576 kcal totales', details: 'Registro Health Connect (com.huami.watch)' },
+      { date: '2026-09-05', type: 'ACTIVITY', badge: 'badge-activity', typeLabel: '🏃 Actividad', primary: '3,622 pasos | 1,203 m', secondary: '1,524 kcal totales', details: 'Registro Health Connect (com.huami.watch)' },
+      { date: '2026-09-04', type: 'ACTIVITY', badge: 'badge-activity', typeLabel: '🏃 Actividad', primary: '5,947 pasos | 2,063 m', secondary: '1,566 kcal totales', details: 'Registro Health Connect (com.huami.watch)' },
+      { date: '2026-09-03', type: 'ACTIVITY', badge: 'badge-activity', typeLabel: '🏃 Actividad', primary: '4,918 pasos | 2,535 m', secondary: '1,548 kcal totales', details: 'Registro Health Connect (com.huami.watch)' },
+      { date: '2026-09-02', type: 'ACTIVITY', badge: 'badge-activity', typeLabel: '🏃 Actividad', primary: '6,411 pasos | 2,215 m', secondary: '1,488 kcal totales', details: 'Registro Health Connect (com.huami.watch)' },
+      { date: '2026-09-01', type: 'ACTIVITY', badge: 'badge-activity', typeLabel: '🏃 Actividad', primary: '7,438 pasos | 3,765 m', secondary: '1,556 kcal totales', details: 'Registro Health Connect (com.huami.watch)' },
+
+
+      // Sueño & Descanso (Zepp Sleep)
+      { date: '2026-09-27', type: 'SLEEP', badge: 'badge-sleep', typeLabel: '💤 Sueño', primary: '6h 54m total | Score: 82/100', secondary: 'Profundo: 75m | REM: 65m | Ligero: 270m', details: 'Buena proporción de sueño reparador físico' },
+      { date: '2026-09-11', type: 'SLEEP', badge: 'badge-sleep', typeLabel: '💤 Sueño', primary: '7h 49m total (02:46 - 10:35)', secondary: 'Profundo: 75m | REM: 71m | Ligero: 322m', details: 'Eficiencia óptima | Despierto: 1m' },
+      { date: '2026-09-10', type: 'SLEEP', badge: 'badge-sleep', typeLabel: '💤 Sueño', primary: '9h 25m total (00:38 - 10:03)', secondary: 'Profundo: 107m | REM: 83m | Ligero: 374m', details: 'Sueño profundo superior a 100 min (Excelente recuperación)' },
+      { date: '2026-09-09', type: 'SLEEP', badge: 'badge-sleep', typeLabel: '💤 Sueño', primary: '6h 17m total (01:49 - 08:06)', secondary: 'Profundo: 58m | REM: 97m | Ligero: 221m', details: 'Pico elevado de fase REM (97m)' },
+      { date: '2026-09-08', type: 'SLEEP', badge: 'badge-sleep', typeLabel: '💤 Sueño', primary: '5h 52m total (00:47 - 06:39)', secondary: 'Profundo: 79m | REM: 53m | Ligero: 218m', details: 'Despierto: 2m | Siesta breve: 19m en la tarde' },
+      { date: '2026-09-07', type: 'SLEEP', badge: 'badge-sleep', typeLabel: '💤 Sueño', primary: '8h 08m total (01:01 - 09:09)', secondary: 'Profundo: 80m | REM: 94m | Ligero: 314m', details: 'Sueño REM de alta calidad (94m)' },
+      { date: '2026-09-05', type: 'SLEEP', badge: 'badge-sleep', typeLabel: '💤 Sueño', primary: '5h 34m total (02:59 - 08:33)', secondary: 'Profundo: 44m | REM: 86m | Ligero: 203m', details: 'Descanso complementario vespertino' },
+      { date: '2026-09-04', type: 'SLEEP', badge: 'badge-sleep', typeLabel: '💤 Sueño', primary: '3h 51m total (02:26 - 06:17)', secondary: 'Profundo: 35m | REM: 53m | Ligero: 143m', details: 'Noche corta de estudio / guardia' },
+      { date: '2026-09-03', type: 'SLEEP', badge: 'badge-sleep', typeLabel: '💤 Sueño', primary: '6h 46m total (02:04 - 08:50)', secondary: 'Profundo: 76m | REM: 52m | Ligero: 276m', details: 'Ritmo circadiano estable' },
+      { date: '2026-09-02', type: 'SLEEP', badge: 'badge-sleep', typeLabel: '💤 Sueño', primary: '6h 00m total (02:07 - 08:07)', secondary: 'Profundo: 66m | REM: 57m | Ligero: 237m', details: 'Inicio de semana con buena proporción profunda' },
+
+
+      // Fisiología Cardiovascular & Vitals
+      { date: '2026-09-27', type: 'VITALS', badge: 'badge-vitals', typeLabel: '❤️ Signos Vitales', primary: 'FC Reposo: 48 lpm', secondary: 'HRV: 106.0 ms | SpO2: 97.9%', details: 'Excelente tono vagal / parasimpático' },
+      { date: '2026-09-11', type: 'VITALS', badge: 'badge-vitals', typeLabel: '❤️ Signos Vitales', primary: 'FC Reposo: 48 lpm', secondary: 'HRV: 110.2 ms | SpO2: 98.2%', details: 'Pico de HRV semanal (110 ms - recuperación alta)' },
+      { date: '2026-09-10', type: 'VITALS', badge: 'badge-vitals', typeLabel: '❤️ Signos Vitales', primary: 'FC Reposo: 46 lpm', secondary: 'HRV: 105.0 ms | SpO2: 98.0%', details: 'Mínima de FC en reposo (46 lpm - perfil atlético)' },
+      { date: '2026-09-09', type: 'VITALS', badge: 'badge-vitals', typeLabel: '❤️ Signos Vitales', primary: 'FC Reposo: 47 lpm', secondary: 'HRV: 95.4 ms | SpO2: 98.1%', details: 'Estabilidad hemodinámica' },
+      { date: '2026-09-08', type: 'VITALS', badge: 'badge-vitals', typeLabel: '❤️ Signos Vitales', primary: 'FC Reposo: 50 lpm', secondary: 'HRV: 102.1 ms | SpO2: 97.9%', details: 'Buena adaptación al esfuerzo diario' },
+      { date: '2026-09-07', type: 'VITALS', badge: 'badge-vitals', typeLabel: '❤️ Signos Vitales', primary: 'FC Reposo: 48 lpm', secondary: 'HRV: 98.0 ms | SpO2: 97.5%', details: 'FC media diurna: 72 lpm' },
+      { date: '2026-09-05', type: 'VITALS', badge: 'badge-vitals', typeLabel: '❤️ Signos Vitales', primary: 'FC Reposo: 52 lpm', secondary: 'HRV: 94.2 ms | SpO2: 97.2%', details: 'FC media diurna: 74 lpm' },
+      { date: '2026-09-04', type: 'VITALS', badge: 'badge-vitals', typeLabel: '❤️ Signos Vitales', primary: 'FC Reposo: 48 lpm', secondary: 'HRV: 89.8 ms | SpO2: 97.8%', details: 'Leve caída de HRV post noche corta' },
+      { date: '2026-09-03', type: 'VITALS', badge: 'badge-vitals', typeLabel: '❤️ Signos Vitales', primary: 'FC Reposo: 47 lpm', secondary: 'HRV: 100.3 ms | SpO2: 97.8%', details: 'FC max: 115 lpm | media: 68.5 lpm' },
+      { date: '2026-09-02', type: 'VITALS', badge: 'badge-vitals', typeLabel: '❤️ Signos Vitales', primary: 'FC Reposo: 50 lpm', secondary: 'HRV: 107.5 ms | SpO2: 96.8%', details: 'FC max: 117 lpm | media: 71.6 lpm' },
+      { date: '2026-09-01', type: 'VITALS', badge: 'badge-vitals', typeLabel: '❤️ Signos Vitales', primary: 'FC Promedio: 73.5 lpm', secondary: 'FC Min: 54 | Max: 114 | SpO2: 97.1%', details: 'Registro inicial de septiembre' }
+    ];
+
+
+    let currentCategory = 'ALL';
+    let sortDescending = true;
+
+
+    function updateCounters() {
+      document.getElementById('countAll').textContent = rawRecords.length;
+      document.getElementById('countNutrition').textContent = rawRecords.filter(r => r.type === 'NUTRITION').length;
+      document.getElementById('countActivity').textContent = rawRecords.filter(r => r.type === 'ACTIVITY').length;
+      document.getElementById('countSleep').textContent = rawRecords.filter(r => r.type === 'SLEEP').length;
+      document.getElementById('countVitals').textContent = rawRecords.filter(r => r.type === 'VITALS').length;
+      document.getElementById('countWeight').textContent = rawRecords.filter(r => r.type === 'WEIGHT').length;
+    }
+
+
+    function renderRecordsTable() {
+      const tbody = document.getElementById('recordsTableBody');
+      const searchTerm = document.getElementById('recordSearch').value.toLowerCase().trim();
+
+
+      let filtered = rawRecords.filter(r => {
+        const matchesCategory = (currentCategory === 'ALL' || r.type === currentCategory);
+        const matchesSearch = !searchTerm || 
+          r.date.toLowerCase().includes(searchTerm) ||
+          r.primary.toLowerCase().includes(searchTerm) ||
+          r.secondary.toLowerCase().includes(searchTerm) ||
+          r.details.toLowerCase().includes(searchTerm);
+        return matchesCategory && matchesSearch;
+      });
+
+
+      filtered.sort((a, b) => {
+        const dateA = new Date(a.date.replace(' ', 'T')).getTime();
+        const dateB = new Date(b.date.replace(' ', 'T')).getTime();
+        return sortDescending ? (dateB - dateA) : (dateA - dateB);
+      });
+
+
+      tbody.innerHTML = '';
+
+
+      if (filtered.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="5" style="text-align: center; color: var(--text-muted); padding: 32px;">No se encontraron registros.</td></tr>`;
+        return;
+      }
+
+
+      filtered.forEach(r => {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td style="font-weight: 700; white-space: nowrap; color: #fff;">${r.date}</td>
+          <td><span class="type-badge ${r.badge}">${r.typeLabel}</span></td>
+          <td style="font-weight: 600;">${r.primary}</td>
+          <td style="color: var(--text-muted);">${r.secondary}</td>
+          <td><span class="tag-note">${r.details}</span></td>
+        `;
+        tbody.appendChild(tr);
+      });
+    }
+
+
+    function filterRecords(category, btnElement) {
+      currentCategory = category;
+      document.querySelectorAll('.pill-btn').forEach(b => b.classList.remove('active'));
+      btnElement.classList.add('active');
+      renderRecordsTable();
+    }
+
+
+    function handleSearch() {
+      renderRecordsTable();
+    }
+
+
+    function toggleSort() {
+      sortDescending = !sortDescending;
+      document.getElementById('sortIcon').textContent = sortDescending ? '⬇️' : '⬆️';
+      document.getElementById('sortText').textContent = sortDescending ? 'Más recientes' : 'Más antiguos';
+      renderRecordsTable();
+    }
+
+
+    updateCounters();
+    renderRecordsTable();
+  </script>
+</body>
+</html>
