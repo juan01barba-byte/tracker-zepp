@@ -254,7 +254,7 @@
         </div>
       </div>
 
-      <!-- Macros Card -->
+      <!-- Macros Card (Dynamic Bars Connected to Sheet) -->
       <div class="card">
         <h2 style="font-size: 1.1rem; font-weight: 700; margin-bottom: 6px;">Metas de Macronutrientes</h2>
         <p style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 14px;">Objetivo base: 1,750 kcal/día</p>
@@ -263,7 +263,7 @@
           <div class="macro-item">
             <div class="macro-labels">
               <span><strong>Proteína</strong> (116g obj)</span>
-              <span id="protStatus">-- / 116g</span>
+              <span id="protStatus">0g / 116g</span>
             </div>
             <div class="progress-bar-bg">
               <div class="progress-bar-fill" id="protBar" style="width: 0%; background: var(--accent-blue);"></div>
@@ -273,7 +273,7 @@
           <div class="macro-item">
             <div class="macro-labels">
               <span><strong>Carbohidratos</strong> (200g obj)</span>
-              <span id="carbsStatus">-- / 200g</span>
+              <span id="carbsStatus">0g / 200g</span>
             </div>
             <div class="progress-bar-bg">
               <div class="progress-bar-fill" id="carbsBar" style="width: 0%; background: var(--accent-green);"></div>
@@ -283,7 +283,7 @@
           <div class="macro-item">
             <div class="macro-labels">
               <span><strong>Grasas</strong> (54g obj)</span>
-              <span id="fatStatus">-- / 54g</span>
+              <span id="fatStatus">0g / 54g</span>
             </div>
             <div class="progress-bar-bg">
               <div class="progress-bar-fill" id="fatBar" style="width: 0%; background: var(--accent-orange);"></div>
@@ -316,11 +316,11 @@
               <th>Fecha</th>
               <th>Peso (kg)</th>
               <th>Cal. Consumidas</th>
-              <th>Cal. Quemadas</th>
-              <th>Déficit Neto</th>
+              <th>Proteínas</th>
+              <th>Carbohidratos</th>
+              <th>Grasas</th>
               <th>Pasos Zepp</th>
               <th>Sueño</th>
-              <th>FC Reposo</th>
             </tr>
           </thead>
           <tbody>
@@ -423,7 +423,6 @@
         const text = await response.text();
         const rows = parseCSV(text);
 
-        // Filter out header rows and empty rows
         let dataRows = [];
         for (let i = 0; i < rows.length; i++) {
           const row = rows[i];
@@ -431,7 +430,6 @@
           const firstCol = row[0].toLowerCase();
           if (firstCol.includes('fecha') || firstCol === '') continue;
           
-          // Row has some date-like or content
           if (/\d/.test(firstCol)) {
             dataRows.push(row);
           }
@@ -446,16 +444,13 @@
     }
 
     function updateUI(dataRows) {
-      // Sort chronologically if needed or take latest
       const latest = dataRows[dataRows.length - 1];
 
-      // Columns in 'Registro Diario':
-      // 0: Fecha, 1: Peso, 2: Promedio Movil, 3: Cal In, 4: Cal Out, 5: Balance Neto, 6: Deficit, 7: Pasos, 8: Agua, 9: Notas, 10: Score, 11: Horas, 12: Profundo, 13: FC
-      const date = latest[0] || 'Hoy';
+      // Columns:
+      // 0: Fecha, 1: Peso, 2: Promedio, 3: Cal In, 4: Cal Out, 5: Balance Neto, 6: Deficit, 7: Pasos, 8: Agua, 9: Notas, 10: Score, 11: Horas, 12: Profundo, 13: FC, 14: Prot, 15: Carbs, 16: Fat
       const weight = cleanNum(latest[1]) || 64.3;
       const calIn = cleanNum(latest[3]);
       const calOut = cleanNum(latest[4]);
-      
       let netDeficitVal = cleanNum(latest[5]) || (calOut > 0 ? (calIn - calOut) : 0);
       const steps = cleanNum(latest[7]);
       const sleepScore = latest[10] || '--';
@@ -463,23 +458,40 @@
       const sleepDeep = latest[12] ? latest[12] + ' min' : '--';
       const rhr = latest[13] || '--';
 
-      document.getElementById('kpiNetDeficit').innerText = (netDeficitVal !== 0 ? netDeficitVal : '-520') + ' kcal';
-      document.getElementById('kpiCalSub').innerText = `Consumidas: ${calIn || 640} | Quemadas: ${calOut || 2300}`;
-      document.getElementById('kpiSteps').innerText = steps ? steps.toLocaleString() : '10,420';
+      // Macros
+      const prot = cleanNum(latest[14]) || 0;
+      const carbs = cleanNum(latest[15]) || 0;
+      const fat = cleanNum(latest[16]) || 0;
+
+      // Update KPIs
+      document.getElementById('kpiNetDeficit').innerText = (netDeficitVal !== 0 ? netDeficitVal : '- kcal') + (typeof netDeficitVal === 'number' && netDeficitVal !== 0 ? ' kcal' : '');
+      document.getElementById('kpiCalSub').innerText = `Consumidas: ${calIn || '--'} | Quemadas: ${calOut || '--'}`;
+      document.getElementById('kpiSteps').innerText = steps ? steps.toLocaleString() : '--';
       document.getElementById('kpiSleepScore').innerHTML = `${sleepScore} <span style="font-size: 1rem; color: var(--text-muted);">/100</span>`;
       document.getElementById('kpiSleepSub').innerText = `${sleepHours} total | ${sleepDeep} profundo`;
       document.getElementById('kpiWeight').innerText = `${weight} kg`;
       document.getElementById('kpiRHRSub').innerText = `FC Reposo: ${rhr} lpm`;
 
+      // Update Macros Progress Bars
+      document.getElementById('protStatus').innerText = `${prot}g / 116g`;
+      document.getElementById('protBar').style.width = Math.min(100, Math.round((prot / 116) * 100)) + '%';
+
+      document.getElementById('carbsStatus').innerText = `${carbs}g / 200g`;
+      document.getElementById('carbsBar').style.width = Math.min(100, Math.round((carbs / 200) * 100)) + '%';
+
+      document.getElementById('fatStatus').innerText = `${fat}g / 54g`;
+      document.getElementById('fatBar').style.width = Math.min(100, Math.round((fat / 54) * 100)) + '%';
+
+      // Zepp recovery
       document.getElementById('zeppScoreDetail').innerText = `${sleepScore} / 100`;
       document.getElementById('zeppHoursDetail').innerText = sleepHours;
       document.getElementById('zeppDeepDetail').innerText = sleepDeep;
       document.getElementById('zeppRHRDetail').innerText = `${rhr} lpm`;
 
-      // Update Chart with all recorded rows
+      // Update Chart
       const labels = dataRows.map(r => r[0]);
       const weights = dataRows.map(r => cleanNum(r[1]) || 64.3);
-      const deficits = dataRows.map(r => Math.abs(cleanNum(r[6]) || cleanNum(r[5]) || 450));
+      const deficits = dataRows.map(r => Math.abs(cleanNum(r[6]) || cleanNum(r[5]) || 0));
 
       trendChart.data.labels = labels;
       trendChart.data.datasets[0].data = weights;
@@ -495,11 +507,11 @@
           <td><strong>${row[0] || '-'}</strong></td>
           <td>${row[1] || '-'} kg</td>
           <td>${row[3] || '-'}</td>
-          <td>${row[4] || '-'}</td>
-          <td style="color: var(--accent-green); font-weight: 600;">${row[5] || row[6] || '-'}</td>
+          <td><span style="color: var(--accent-blue); font-weight: 600;">${row[14] ? row[14] + 'g' : '-'}</span></td>
+          <td><span style="color: var(--accent-green); font-weight: 600;">${row[15] ? row[15] + 'g' : '-'}</span></td>
+          <td><span style="color: var(--accent-orange); font-weight: 600;">${row[16] ? row[16] + 'g' : '-'}</span></td>
           <td>${row[7] || '-'}</td>
-          <td>${row[10] || '-'} (${row[11] || '-'})</td>
-          <td>${row[13] || '-'} lpm</td>
+          <td>${row[10] || '-'}</td>
         `;
         tbody.appendChild(tr);
       });
