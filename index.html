@@ -161,7 +161,7 @@
       color: #7dd3fc;
     }
 
-    .meal-selector {
+    .selector-control {
       background: #0b0f19;
       color: var(--text-main);
       border: 1px solid var(--card-border);
@@ -215,7 +215,7 @@
     }
 
     .legend-val {
-      font-size: 1.1rem;
+      font-size: 1.15rem;
       font-weight: 800;
     }
 
@@ -244,7 +244,8 @@
     }
 
     tr:hover {
-      background: rgba(255, 255, 255, 0.02);
+      background: rgba(255, 255, 255, 0.03);
+      cursor: pointer;
     }
 
     .badge-filter {
@@ -254,6 +255,13 @@
       border-radius: 6px;
       font-size: 0.75rem;
       font-weight: 600;
+    }
+
+    .pill-macro {
+      padding: 3px 8px;
+      border-radius: 6px;
+      font-weight: 700;
+      font-size: 0.8rem;
     }
   </style>
 </head>
@@ -310,17 +318,18 @@
         </div>
       </div>
 
-      <!-- Doughnut Chart: Macros breakdown (General & por comida) -->
+      <!-- Doughnut Chart: Macros breakdown (Rueda de composición de comidas) -->
       <div class="card">
         <div class="chart-header">
           <div>
-            <h2 style="font-size: 1.1rem; font-weight: 700;">Composición de Macros</h2>
-            <span style="font-size: 0.78rem; color: var(--text-muted);">Rueda de Carbs, Proteína y Grasas</span>
+            <h2 style="font-size: 1.1rem; font-weight: 700;">Rueda de Macronutrientes</h2>
+            <span style="font-size: 0.78rem; color: var(--text-muted);" id="wheelSubtitle">Composición nutricional en gramos (g)</span>
           </div>
-          <select id="mealSelect" class="meal-selector" onchange="changeMacroView()">
-            <option value="daily">Total Diario (Hoy)</option>
-            <option value="lunch">Almuerzo / Comida 3:45pm</option>
-            <option value="snack">Snack (Guineo)</option>
+          <select id="mealSelect" class="selector-control" onchange="onMealSelectChange()">
+            <option value="daily_latest">Total Diario (Último Registro)</option>
+            <option value="meal_lunch">Comida 3:45pm (Burrito Pollo + Frijoles)</option>
+            <option value="meal_snack">Snack (Guineo)</option>
+            <option value="day_27">Día 27 (Festival Mejorana)</option>
           </select>
         </div>
         <div class="doughnut-wrapper">
@@ -347,8 +356,8 @@
     <div class="card">
       <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; flex-wrap: wrap; gap: 8px;">
         <div>
-          <h2 style="font-size: 1.1rem; font-weight: 700;">Historial de Registros</h2>
-          <span style="font-size: 0.78rem; color: var(--text-muted);" id="tableFilterSub">Mostrando últimos 7 días</span>
+          <h2 style="font-size: 1.1rem; font-weight: 700;">Historial Sincronizado del Google Sheet</h2>
+          <span style="font-size: 0.78rem; color: var(--text-muted);" id="tableFilterSub">Mostrando últimos 7 días (haz clic en una fila para cargar su rueda de macros)</span>
         </div>
         <div style="display: flex; gap: 14px; align-items: center;">
           <button class="chart-link" id="toggleTableBtn" onclick="toggleDateRange()">Ver todos los registros</button>
@@ -362,16 +371,18 @@
               <th>Fecha</th>
               <th>Peso (kg)</th>
               <th>Cal. In</th>
-              <th>Proteína</th>
-              <th>Carbs</th>
-              <th>Grasas</th>
+              <th>Cal. Quemadas</th>
+              <th>Déficit</th>
+              <th>Proteína (g)</th>
+              <th>Carbs (g)</th>
+              <th>Grasas (g)</th>
               <th>Pasos Zepp</th>
               <th>Sueño Zepp</th>
               <th>FC Reposo</th>
             </tr>
           </thead>
           <tbody>
-            <tr><td colspan="9" style="text-align: center; color: var(--text-muted);">Sincronizando con Google Sheets...</td></tr>
+            <tr><td colspan="11" style="text-align: center; color: var(--text-muted);">Sincronizando con Google Sheets...</td></tr>
           </tbody>
         </table>
       </div>
@@ -384,7 +395,7 @@
     let allLoadedRows = [];
     let showAllDays = false;
 
-    // Trend Chart Setup
+    // Trend Chart
     const ctxTrend = document.getElementById('trendChart').getContext('2d');
     let trendChart = new Chart(ctxTrend, {
       type: 'line',
@@ -439,7 +450,7 @@
       }
     });
 
-    // Doughnut Chart Setup (Macros)
+    // Doughnut Chart (Macro Wheel)
     const ctxDoughnut = document.getElementById('macroDoughnut').getContext('2d');
     let macroDoughnut = new Chart(ctxDoughnut, {
       type: 'doughnut',
@@ -450,7 +461,7 @@
           backgroundColor: ['#38bdf8', '#10b981', '#f97316'],
           borderWidth: 2,
           borderColor: '#111827',
-          hoverOffset: 6
+          hoverOffset: 8
         }]
       },
       options: {
@@ -473,22 +484,29 @@
       }
     });
 
-    let mealBreakdown = {
-      daily: { p: 42, c: 77, f: 20 },
-      lunch: { p: 40.5, c: 49.8, f: 19.7 },
-      snack: { p: 1.3, c: 27.0, f: 0.3 }
+    let mealsData = {
+      daily_latest: { title: "Total Diario", p: 42, c: 77, f: 20 },
+      meal_lunch: { title: "Burrito con Pollo Melo", p: 40.5, c: 49.8, f: 19.7 },
+      meal_snack: { title: "Snack Guineo", p: 1.3, c: 27.0, f: 0.3 },
+      day_27: { title: "Total 27/09 (Mejorana)", p: 73, c: 173, f: 126 }
     };
 
-    function changeMacroView() {
-      const selection = document.getElementById('mealSelect').value;
-      const data = mealBreakdown[selection] || mealBreakdown.daily;
-      
-      macroDoughnut.data.datasets[0].data = [data.p, data.c, data.f];
+    function setMacroWheel(p, c, f, titleText) {
+      macroDoughnut.data.datasets[0].data = [p, c, f];
       macroDoughnut.update();
 
-      document.getElementById('legProt').innerText = data.p + ' g';
-      document.getElementById('legCarbs').innerText = data.c + ' g';
-      document.getElementById('legFat').innerText = data.f + ' g';
+      document.getElementById('legProt').innerText = p + ' g';
+      document.getElementById('legCarbs').innerText = c + ' g';
+      document.getElementById('legFat').innerText = f + ' g';
+      if (titleText) {
+        document.getElementById('wheelSubtitle').innerText = `${titleText}: ${p}g P | ${c}g C | ${f}g G`;
+      }
+    }
+
+    function onMealSelectChange() {
+      const key = document.getElementById('mealSelect').value;
+      const m = mealsData[key] || mealsData.daily_latest;
+      setMacroWheel(m.p, m.c, m.f, m.title);
     }
 
     function cleanNum(val) {
@@ -531,7 +549,7 @@
         toggleBtn.innerText = '← Ver solo últimos 7 días';
         toggleTableBtn.innerText = '← Ver solo últimos 7 días';
         badge.innerText = 'Mostrando: Historial completo';
-        tableSub.innerText = 'Mostrando todos los registros';
+        tableSub.innerText = 'Mostrando todos los registros sincronizados';
       } else {
         toggleBtn.innerText = 'Ver todos los registros (Historial completo) →';
         toggleTableBtn.innerText = 'Ver todos los registros';
@@ -561,6 +579,7 @@
         }
 
         if (dataRows.length > 0) {
+          dataRows.sort((a, b) => new Date(a[0]) - new Date(b[0]));
           allLoadedRows = dataRows;
           updateTopKPIs(dataRows);
           renderChartsAndTable();
@@ -587,16 +606,16 @@
       const carbs = cleanNum(latest[15]) || 77;
       const fat = cleanNum(latest[16]) || 20;
 
-      document.getElementById('kpiNetDeficit').innerText = (netDeficitVal !== 0 ? netDeficitVal : '-520') + ' kcal';
-      document.getElementById('kpiCalSub').innerText = `Consumidas: ${calIn || 640} | Quemadas: ${calOut || 2300}`;
-      document.getElementById('kpiSteps').innerText = steps ? steps.toLocaleString() : '10,420';
+      document.getElementById('kpiNetDeficit').innerText = (netDeficitVal !== 0 ? netDeficitVal : '- kcal') + (typeof netDeficitVal === 'number' && netDeficitVal !== 0 ? ' kcal' : '');
+      document.getElementById('kpiCalSub').innerText = `Consumidas: ${calIn || '--'} | Quemadas: ${calOut || '--'}`;
+      document.getElementById('kpiSteps').innerText = steps ? steps.toLocaleString() : '--';
       document.getElementById('kpiSleepScore').innerHTML = `${sleepScore} <span style="font-size: 1rem; color: var(--text-muted);">/100</span>`;
       document.getElementById('kpiSleepSub').innerText = `${sleepHours} total | ${sleepDeep} profundo`;
       document.getElementById('kpiWeight').innerText = `${weight} kg`;
       document.getElementById('kpiRHRSub').innerText = `FC Reposo: ${rhr} lpm`;
 
-      mealBreakdown.daily = { p: prot, c: carbs, f: fat };
-      changeMacroView();
+      mealsData.daily_latest = { title: "Total " + latest[0], p: prot, c: carbs, f: fat };
+      setMacroWheel(prot, carbs, fat, "Total Diario (" + latest[0] + ")");
     }
 
     function renderChartsAndTable() {
@@ -617,16 +636,26 @@
       tbody.innerHTML = '';
       displayRows.slice().reverse().forEach(row => {
         const tr = document.createElement('tr');
+        const p = cleanNum(row[14]) || 0;
+        const c = cleanNum(row[15]) || 0;
+        const f = cleanNum(row[16]) || 0;
+
+        tr.onclick = () => {
+          setMacroWheel(p, c, f, "Día " + row[0]);
+        };
+
         tr.innerHTML = `
           <td><strong>${row[0] || '-'}</strong></td>
           <td>${row[1] || '-'} kg</td>
           <td>${row[3] || '-'}</td>
-          <td><span style="color: var(--accent-blue); font-weight: 600;">${row[14] ? row[14] + 'g' : '-'}</span></td>
-          <td><span style="color: var(--accent-green); font-weight: 600;">${row[15] ? row[15] + 'g' : '-'}</span></td>
-          <td><span style="color: var(--accent-orange); font-weight: 600;">${row[16] ? row[16] + 'g' : '-'}</span></td>
-          <td>${row[7] || '-'}</td>
+          <td>${row[4] || '-'}</td>
+          <td style="color: var(--accent-green); font-weight: 600;">${row[5] || row[6] || '-'}</td>
+          <td><span class="pill-macro" style="color: var(--accent-blue); background: rgba(56, 189, 248, 0.1);">${p ? p + 'g' : '-'}</span></td>
+          <td><span class="pill-macro" style="color: var(--accent-green); background: rgba(16, 185, 129, 0.1);">${c ? c + 'g' : '-'}</span></td>
+          <td><span class="pill-macro" style="color: var(--accent-orange); background: rgba(249, 115, 22, 0.1);">${f ? f + 'g' : '-'}</span></td>
+          <td><strong>${row[7] ? Number(row[7]).toLocaleString() : '-'}</strong></td>
           <td>${row[10] || '-'} (${row[11] || '-'})</td>
-          <td>${row[13] || '-'} lpm</td>
+          <td>${row[13] ? row[13] + ' lpm' : '-'}</td>
         `;
         tbody.appendChild(tr);
       });
