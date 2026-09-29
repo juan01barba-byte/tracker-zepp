@@ -637,218 +637,174 @@
     });
 
     // ==========================================
-    // 3. DATOS Y GRÁFICAS DE CHART.JS (Activity, Sleep, Vitals)
     // ==========================================
-    const fechas = ['09-02', '09-03', '09-04', '09-05', '09-06', '09-07', '09-08', '09-09', '09-10', '09-11', '09-25', '09-26', '09-27', '09-28'];
+    // 3. LECTURA EN TIEMPO REAL DESDE GOOGLE SHEETS
+    // ==========================================
+    const CSV_URL = "https://docs.google.com/spreadsheets/d/1S2Ov9hMtIm6UrI8uuvuDXNJNiUhbHV6lZ-fM-gu69UE/export?format=csv";
 
-    // GRÁFICA 1: Peso vs Déficit Calórico
-    const ctxWeight = document.getElementById('weightDeficitChart').getContext('2d');
-    new Chart(ctxWeight, {
-      type: 'line',
-      data: {
-        labels: fechas,
-        datasets: [
-          {
-            label: 'Peso (kg)',
-            data: [64.8, 64.7, 64.7, 64.6, 64.5, 64.5, 64.4, 64.4, 64.3, 64.4, 64.4, 64.3, 64.5, 64.3],
-            borderColor: '#38bdf8',
-            backgroundColor: 'rgba(56, 189, 248, 0.1)',
-            tension: 0.35,
-            yAxisID: 'yPeso',
-            fill: true,
-            pointRadius: 4,
-            pointHoverRadius: 6
-          },
-          {
-            label: 'Déficit Calórico Diario (kcal)',
-            data: [480, 520, 500, 420, 550, 490, 510, 530, 470, 500, 540, 520, -95, 640],
-            backgroundColor: 'rgba(16, 185, 129, 0.75)',
-            borderColor: '#10b981',
-            borderWidth: 1,
-            type: 'bar',
-            yAxisID: 'yDeficit'
-          }
-        ]
-      },
-      options: {
-        responsive: true,
-        maintainAspectRatio: false,
-        plugins: {
-          legend: { labels: { color: '#9ca3af', font: { family: 'Plus Jakarta Sans', size: 11 } } }
-        },
-        scales: {
-          x: { grid: { color: 'rgba(255, 255, 255, 0.05)' }, ticks: { color: '#9ca3af' } },
-          yPeso: {
-            type: 'linear',
-            position: 'left',
-            min: 63.5,
-            max: 65.5,
-            grid: { color: 'rgba(255, 255, 255, 0.05)' },
-            ticks: { color: '#38bdf8' }
-          },
-          yDeficit: {
-            type: 'linear',
-            position: 'right',
-            grid: { drawOnChartArea: false },
-            ticks: { color: '#10b981' }
+    function cleanNum(val) {
+      if (!val) return 0;
+      let s = val.toString().replace(/,/g, '.').replace(/[^0-9.-]/g, '');
+      let n = parseFloat(s);
+      return isNaN(n) ? 0 : n;
+    }
+
+    function parseCSV(text) {
+      const lines = text.trim().split(/\r?\n/);
+      return lines.map(line => {
+        const row = [];
+        let inQuotes = false;
+        let entry = '';
+        for (let i = 0; i < line.length; i++) {
+          const c = line[i];
+          if (c === '"') {
+            inQuotes = !inQuotes;
+          } else if (c === ',' && !inQuotes) {
+            row.push(entry.trim());
+            entry = '';
+          } else {
+            entry += c;
           }
         }
-      }
-    });
+        row.push(entry.trim());
+        return row;
+      });
+    }
 
-    // GRÁFICA 2: Arquitectura de Sueño (Sueño Profundo, Ligero, REM)
-    const ctxSleep = document.getElementById('sleepChart').getContext('2d');
-    new Chart(ctxSleep, {
-      type: 'bar',
-      data: {
-        labels: ['09-02', '09-03', '09-04', '09-05', '09-07', '09-08', '09-09', '09-10', '09-11', '09-27'],
-        datasets: [
-          {
-            label: 'Sueño Profundo (min)',
-            data: [66, 76, 35, 44, 80, 79, 58, 107, 75, 75],
-            backgroundColor: '#a855f7'
-          },
-          {
-            label: 'Sueño REM (min)',
-            data: [57, 52, 53, 86, 94, 53, 97, 83, 71, 65],
-            backgroundColor: '#38bdf8'
-          },
-          {
-            label: 'Sueño Ligero (min)',
-            data: [237, 276, 143, 203, 314, 218, 221, 374, 322, 270],
-            backgroundColor: '#334155'
-          }
-        ]
-      },
-      options: {
-        responsive: true,
-        maintainAspectRatio: false,
-        plugins: {
-          legend: { labels: { color: '#9ca3af', font: { family: 'Plus Jakarta Sans', size: 11 } } },
-          tooltip: {
-            callbacks: {
-              footer: (items) => {
-                let total = 0;
-                items.forEach(i => total += i.raw);
-                return 'Total: ' + Math.floor(total / 60) + 'h ' + (total % 60) + 'm';
-              }
-            }
-          }
-        },
-        scales: {
-          x: { stacked: true, grid: { color: 'rgba(255, 255, 255, 0.05)' }, ticks: { color: '#9ca3af' } },
-          y: {
-            stacked: true,
-            grid: { color: 'rgba(255, 255, 255, 0.05)' },
-            ticks: { color: '#9ca3af' },
-            title: { display: true, text: 'Minutos de sueño', color: '#9ca3af' }
-          }
+    let weightDeficitChart, sleepChart, activityChart, vitalsTrendChart;
+
+    async function loadLiveData() {
+      try {
+        const noCacheUrl = CSV_URL + '&_t=' + new Date().getTime();
+        const response = await fetch(noCacheUrl);
+        const text = await response.text();
+        const rows = parseCSV(text);
+
+        let dataRows = [];
+        for (let i = 0; i < rows.length; i++) {
+          const row = rows[i];
+          if (!row || row.length < 2) continue;
+          const firstCol = row[0].toLowerCase();
+          if (firstCol.includes('fecha') || firstCol === '') continue;
+          if (/\d/.test(firstCol)) dataRows.push(row);
         }
-      }
-    });
 
-    // GRÁFICA 3: Pasos Diarios vs Meta (10,000 pasos)
-    const ctxActivity = document.getElementById('activityChart').getContext('2d');
-    new Chart(ctxActivity, {
-      type: 'bar',
-      data: {
-        labels: ['09-01', '09-02', '09-03', '09-04', '09-05', '09-06', '09-25', '09-26', '09-27'],
-        datasets: [
-          {
-            label: 'Pasos Diarios',
-            data: [7438, 6411, 4918, 5947, 3622, 8893, 4679, 5541, 11335],
-            backgroundColor: (context) => {
-              const val = context.raw;
-              return val >= 10000 ? '#10b981' : '#0284c7';
+        if (dataRows.length > 0) {
+          dataRows.sort((a, b) => new Date(a[0]) - new Date(b[0]));
+          updateDashboard(dataRows);
+        }
+      } catch (err) {
+        console.error("Error al sincronizar con Google Sheets:", err);
+      }
+    }
+
+    function updateDashboard(dataRows) {
+      const latest = dataRows[dataRows.length - 1];
+
+      // Mapeo columnas: 0:Fecha, 1:Peso, 3:CalIn, 4:CalOut, 5:Neto, 6:Deficit, 7:Pasos, 10:Sueño, 11:Horas, 12:Profundo, 13:FC
+      const weight = cleanNum(latest[1]) || 64.3;
+      const calIn = cleanNum(latest[3]);
+      const calOut = cleanNum(latest[4]);
+      const netDeficit = latest[5] || (calOut > 0 ? (calIn - calOut) + ' kcal' : '- kcal');
+      const steps = cleanNum(latest[7]);
+      const sleepScore = latest[10] || '--';
+      const sleepHours = latest[11] || '--';
+      const sleepDeep = latest[12] || '--';
+      const rhr = latest[13] || '--';
+
+      // 1. Actualización de KPIs superiores
+      document.getElementById('kpiNetDeficit').innerText = netDeficit.toString().includes('kcal') ? netDeficit : netDeficit + ' kcal';
+      document.getElementById('kpiSteps').innerText = steps ? steps.toLocaleString() : '--';
+      document.getElementById('kpiSleepScore').innerHTML = `${sleepScore} <span style="font-size: 0.95rem; color: var(--text-muted);">/100</span>`;
+      document.getElementById('kpiRHR').innerHTML = `${rhr} <span style="font-size: 0.95rem; color: var(--text-muted);">lpm</span>`;
+      document.getElementById('kpiWeight').innerHTML = `${weight} <span style="font-size: 0.95rem; color: var(--text-muted);">kg</span>`;
+
+      // 2. Gráfica 1: Peso vs Déficit
+      const labels = dataRows.map(r => r[0].slice(5)); // Muestra MM-DD
+      const weights = dataRows.map(r => cleanNum(r[1]) || null);
+      const deficits = dataRows.map(r => Math.abs(cleanNum(r[6]) || cleanNum(r[5]) || 0));
+
+      const ctxWeight = document.getElementById('weightDeficitChart').getContext('2d');
+      if (weightDeficitChart) weightDeficitChart.destroy();
+      weightDeficitChart = new Chart(ctxWeight, {
+        type: 'line',
+        data: {
+          labels: labels,
+          datasets: [
+            {
+              label: 'Peso (kg)',
+              data: weights,
+              borderColor: '#38bdf8',
+              backgroundColor: 'rgba(56, 189, 248, 0.1)',
+              tension: 0.35,
+              yAxisID: 'yPeso',
+              fill: true,
+              pointRadius: 4
             },
-            borderRadius: 6
-          },
-          {
-            label: 'Meta (10,000 pasos)',
-            data: [10000, 10000, 10000, 10000, 10000, 10000, 10000, 10000, 10000],
-            type: 'line',
-            borderColor: '#f97316',
-            borderWidth: 2,
-            borderDash: [6, 4],
-            pointRadius: 0,
-            fill: false
-          }
-        ]
-      },
-      options: {
-        responsive: true,
-        maintainAspectRatio: false,
-        plugins: {
-          legend: { labels: { color: '#9ca3af', font: { family: 'Plus Jakarta Sans', size: 11 } } }
+            {
+              label: 'Déficit Calórico Diario (kcal)',
+              data: deficits,
+              backgroundColor: 'rgba(16, 185, 129, 0.75)',
+              borderColor: '#10b981',
+              borderWidth: 1,
+              type: 'bar',
+              yAxisID: 'yDeficit'
+            }
+          ]
         },
-        scales: {
-          x: { grid: { color: 'rgba(255, 255, 255, 0.05)' }, ticks: { color: '#9ca3af' } },
-          y: {
-            grid: { color: 'rgba(255, 255, 255, 0.05)' },
-            ticks: { color: '#9ca3af' },
-            title: { display: true, text: 'Pasos', color: '#9ca3af' }
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: { legend: { labels: { color: '#9ca3af', font: { family: 'Plus Jakarta Sans', size: 11 } } } },
+          scales: {
+            x: { grid: { color: 'rgba(255, 255, 255, 0.05)' }, ticks: { color: '#9ca3af' } },
+            yPeso: { type: 'linear', position: 'left', grid: { color: 'rgba(255, 255, 255, 0.05)' }, ticks: { color: '#38bdf8' } },
+            yDeficit: { type: 'linear', position: 'right', grid: { drawOnChartArea: false }, ticks: { color: '#10b981' } }
           }
         }
-      }
-    });
+      });
 
-    // GRÁFICA 4: Fisiología Cardiovascular & Recuperación (FC Reposo vs HRV)
-    const ctxVitals = document.getElementById('vitalsTrendChart').getContext('2d');
-    new Chart(ctxVitals, {
-      type: 'line',
-      data: {
-        labels: ['09-02', '09-03', '09-04', '09-05', '09-06', '09-07', '09-08', '09-09', '09-10', '09-11', '09-27'],
-        datasets: [
-          {
-            label: 'FC en Reposo (lpm)',
-            data: [50, 47, 48, 52, 49, 48, 50, 47, 46, 48, 48],
-            borderColor: '#f97316',
-            backgroundColor: 'rgba(249, 115, 22, 0.1)',
-            tension: 0.3,
-            yAxisID: 'yFC',
-            pointRadius: 4,
-            fill: true
-          },
-          {
-            label: 'HRV Promedio (ms)',
-            data: [107.5, 100.3, 89.8, 94.2, 98.0, 102.1, 95.4, 105.0, 110.2, 104.5, 106.0],
-            borderColor: '#ec4899',
-            backgroundColor: 'transparent',
-            tension: 0.3,
-            yAxisID: 'yHRV',
-            pointRadius: 4
-          }
-        ]
-      },
-      options: {
-        responsive: true,
-        maintainAspectRatio: false,
-        plugins: {
-          legend: { labels: { color: '#9ca3af', font: { family: 'Plus Jakarta Sans', size: 11 } } }
+      // 3. Gráfica 3: Pasos Diarios vs Meta
+      const stepsData = dataRows.map(r => cleanNum(r[7]));
+      const ctxActivity = document.getElementById('activityChart').getContext('2d');
+      if (activityChart) activityChart.destroy();
+      activityChart = new Chart(ctxActivity, {
+        type: 'bar',
+        data: {
+          labels: labels,
+          datasets: [
+            {
+              label: 'Pasos Diarios',
+              data: stepsData,
+              backgroundColor: (context) => (context.raw >= 10000 ? '#10b981' : '#0284c7'),
+              borderRadius: 6
+            },
+            {
+              label: 'Meta (10,000 pasos)',
+              data: labels.map(() => 10000),
+              type: 'line',
+              borderColor: '#f97316',
+              borderWidth: 2,
+              borderDash: [6, 4],
+              pointRadius: 0,
+              fill: false
+            }
+          ]
         },
-        scales: {
-          x: { grid: { color: 'rgba(255, 255, 255, 0.05)' }, ticks: { color: '#9ca3af' } },
-          yFC: {
-            type: 'linear',
-            position: 'left',
-            min: 40,
-            max: 65,
-            grid: { color: 'rgba(255, 255, 255, 0.05)' },
-            ticks: { color: '#f97316' },
-            title: { display: true, text: 'FC Reposo (lpm)', color: '#f97316' }
-          },
-          yHRV: {
-            type: 'linear',
-            position: 'right',
-            min: 70,
-            max: 130,
-            grid: { drawOnChartArea: false },
-            ticks: { color: '#ec4899' },
-            title: { display: true, text: 'HRV (ms)', color: '#ec4899' }
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: { legend: { labels: { color: '#9ca3af', font: { family: 'Plus Jakarta Sans', size: 11 } } } },
+          scales: {
+            x: { grid: { color: 'rgba(255, 255, 255, 0.05)' }, ticks: { color: '#9ca3af' } },
+            y: { grid: { color: 'rgba(255, 255, 255, 0.05)' }, ticks: { color: '#9ca3af' } }
           }
         }
-      }
-    });
+      });
+    }
+
+    // Ejecutar lectura en vivo al abrir la página
+    loadLiveData();
   </script>
 </body>
 </html>
