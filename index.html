@@ -339,7 +339,7 @@
         </div>
 
         <!-- Tag Usuario -->
-        <span class="user-tag" id="userHeaderTag">Juan Hurtado (63.5 kg | 1.64 m)</span>
+        <span class="user-tag" id="userHeaderTag">Juan Hurtado (63.46 kg | 1.64 m)</span>
 
         <!-- Botón hacia registros.html -->
         <a href="registros.html" class="btn-registros">
@@ -355,8 +355,8 @@
     <!-- Sync status banner -->
     <div class="sync-banner">
       <div>
-        <div style="font-weight: 700; color: var(--accent-purple); font-size: 0.95rem;">⚡ Pipeline de Métricas Activo</div>
-        <div style="font-size: 0.82rem; color: var(--text-muted); margin-top: 2px;">Integración en tiempo real: Peso, Pasos, Nutrición y Biomarcadores de Zepp</div>
+        <div style="font-weight: 700; color: var(--accent-purple); font-size: 0.95rem;">⚡ Pipeline de Métricas Activo (Registro Diario + Sleep Sheet)</div>
+        <div style="font-size: 0.82rem; color: var(--text-muted); margin-top: 2px;">Integración directa con el historial completo de sueño del último mes (Profundo, REM y Ligero) desde tu pestaña Zepp</div>
       </div>
       <a href="https://docs.google.com/spreadsheets/d/1S2Ov9hMtIm6UrI8uuvuDXNJNiUhbHV6lZ-fM-gu69UE/edit" target="_blank" style="color: var(--accent-blue); text-decoration: none; font-size: 0.85rem; font-weight: 600; background: rgba(56, 189, 248, 0.1); padding: 8px 14px; border-radius: 8px; border: 1px solid rgba(56, 189, 248, 0.2);">Abrir Google Sheet ↗</a>
     </div>
@@ -374,9 +374,9 @@
         <div class="card-subtext" id="kpiStepsSub">Meta: 10,000 pasos</div>
       </div>
       <div class="card">
-        <div class="card-title">Arquitectura de Sueño</div>
+        <div class="card-title">Arquitectura de Sueño (Última Noche)</div>
         <div class="card-value" style="color: var(--accent-purple);" id="kpiSleepScore">- <span style="font-size: 0.95rem; color: var(--text-muted);">/100</span></div>
-        <div class="card-subtext" id="kpiSleepSub">Calculando fases...</div>
+        <div class="card-subtext" id="kpiSleepSub">Calculando fases desde Sleep sheet...</div>
       </div>
       <div class="card">
         <div class="card-title">Cardiovascular & Recuperación</div>
@@ -468,8 +468,8 @@
       <div class="card">
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
           <div>
-            <h2 style="font-size: 1.05rem; font-weight: 700;">Arquitectura y Fases de Sueño (Zepp Sleep)</h2>
-            <p style="font-size: 0.78rem; color: var(--text-muted);">Desglose diario en minutos: Profundo, Ligero y REM</p>
+            <h2 style="font-size: 1.05rem; font-weight: 700;">Arquitectura de Sueño (Zepp Sleep - Pestaña Sleep)</h2>
+            <p style="font-size: 0.78rem; color: var(--text-muted);">Fases reales en minutos (Profundo, REM y Ligero) sincronizadas desde Google Sheets</p>
           </div>
         </div>
         <div class="chart-container">
@@ -620,7 +620,6 @@
         alert('✅ ¡Registro transmitido exitosamente a tu Google Sheet!');
         document.getElementById('trackerForm').reset();
         document.getElementById('inputDate').valueAsDate = new Date();
-        // Recargar datos en vivo inmediatamente
         setTimeout(loadLiveData, 1500);
       } catch (err) {
         alert('❌ Error al enviar datos: ' + err.message);
@@ -634,12 +633,13 @@
     // 3. SINCRONIZACIÓN EN VIVO DESDE GOOGLE SHEETS
     // ==========================================
     const CSV_URL = "https://docs.google.com/spreadsheets/d/1S2Ov9hMtIm6UrI8uuvuDXNJNiUhbHV6lZ-fM-gu69UE/export?format=csv";
+    const SLEEP_CSV_URL = "https://docs.google.com/spreadsheets/d/1S2Ov9hMtIm6UrI8uuvuDXNJNiUhbHV6lZ-fM-gu69UE/gviz/tq?tqx=out:csv&sheet=Sleep";
 
     function cleanNum(val) {
-      if (!val) return 0;
+      if (val === undefined || val === null || val === '') return null;
       let s = val.toString().replace(/,/g, '.').replace(/[^0-9.-]/g, '');
       let n = parseFloat(s);
-      return isNaN(n) ? 0 : n;
+      return isNaN(n) ? null : n;
     }
 
     function parseCSV(text) {
@@ -671,73 +671,123 @@
 
     async function loadLiveData() {
       try {
-        const noCacheUrl = CSV_URL + '&_t=' + new Date().getTime();
-        const response = await fetch(noCacheUrl);
-        const text = await response.text();
-        const rows = parseCSV(text);
+        const timestamp = '&_t=' + new Date().getTime();
+        
+        // Carga simultánea: pestaña 'Registro Diario' y pestaña 'Sleep'
+        const [resDaily, resSleep] = await Promise.allSettled([
+          fetch(CSV_URL + timestamp).then(r => r.text()),
+          fetch(SLEEP_CSV_URL + timestamp).then(r => r.text())
+        ]);
 
         let dataRows = [];
-        for (let i = 0; i < rows.length; i++) {
-          const row = rows[i];
-          if (!row || row.length < 2) continue;
-          const firstCol = row[0].toLowerCase();
-          if (firstCol.includes('fecha') || firstCol === '') continue;
-          if (/\d/.test(firstCol)) dataRows.push(row);
+        if (resDaily.status === 'fulfilled') {
+          const rows = parseCSV(resDaily.value);
+          for (let i = 0; i < rows.length; i++) {
+            const row = rows[i];
+            if (!row || row.length < 2) continue;
+            const firstCol = row[0].toLowerCase();
+            if (firstCol.includes('fecha') || firstCol === '') continue;
+            if (/\d/.test(firstCol)) dataRows.push(row);
+          }
+          dataRows.sort((a, b) => new Date(a[0]) - new Date(b[0]));
+        }
+
+        // Parsear pestaña 'Sleep' con datos reales de todo el mes
+        const sleepMap = {};
+        if (resSleep.status === 'fulfilled') {
+          const sleepRows = parseCSV(resSleep.value);
+          const seenSessions = new Set();
+
+          for (let i = 1; i < sleepRows.length; i++) {
+            const sr = sleepRows[i];
+            if (!sr || sr.length < 8) continue;
+            const dateStr = sr[0]; // Date YYYY-MM-DD
+            const startTime = sr[3]; // Start Time
+            if (!dateStr || !/\d/.test(dateStr)) continue;
+
+            // Desduplicar sesiones de sueño si la app exportó doble
+            const sessionKey = dateStr + '_' + (startTime || '');
+            if (seenSessions.has(sessionKey)) continue;
+            seenSessions.add(sessionKey);
+
+            const light = cleanNum(sr[5]) || 0;
+            const deep = cleanNum(sr[6]) || 0;
+            const rem = cleanNum(sr[7]) || 0;
+            const awake = cleanNum(sr[8]) || 0;
+
+            if (!sleepMap[dateStr]) {
+              sleepMap[dateStr] = { deep: 0, rem: 0, light: 0, awake: 0 };
+            }
+            sleepMap[dateStr].deep += deep;
+            sleepMap[dateStr].rem += rem;
+            sleepMap[dateStr].light += light;
+            sleepMap[dateStr].awake += awake;
+          }
         }
 
         if (dataRows.length > 0) {
-          dataRows.sort((a, b) => new Date(a[0]) - new Date(b[0]));
-          updateDashboard(dataRows);
+          updateDashboard(dataRows, sleepMap);
         }
       } catch (err) {
         console.error("Error al sincronizar con Google Sheets:", err);
       }
     }
 
-    function updateDashboard(dataRows) {
+    function updateDashboard(dataRows, sleepMap) {
       const latest = dataRows[dataRows.length - 1];
 
-      // Buscar peso más reciente
+      // 1. Buscar peso más reciente
       let currentWeight = 63.46;
       for (let i = dataRows.length - 1; i >= 0; i--) {
         const w = cleanNum(dataRows[i][1]);
-        if (w > 0) { currentWeight = w; break; }
+        if (w !== null && w > 0) { currentWeight = w; break; }
       }
 
-      // Buscar pasos más recientes
+      // 2. Buscar pasos más recientes
       let currentSteps = 0;
       for (let i = dataRows.length - 1; i >= 0; i--) {
         const st = cleanNum(dataRows[i][7]);
-        if (st > 0) { currentSteps = st; break; }
+        if (st !== null && st > 0) { currentSteps = st; break; }
       }
 
-      // Buscar sueño más reciente
+      // 3. Buscar datos de sueño de la última noche (desde Sleep Sheet o Registro Diario)
       let currentSleepScore = 82;
-      let currentSleepHours = '6.9';
-      let currentSleepDeep = 75;
-      for (let i = dataRows.length - 1; i >= 0; i--) {
-        const sc = cleanNum(dataRows[i][10]);
-        if (sc > 0) {
-          currentSleepScore = sc;
-          currentSleepHours = dataRows[i][11] || '6.9';
-          currentSleepDeep = cleanNum(dataRows[i][12]) || 75;
-          break;
+      let currentSleepHours = '6.4';
+      let currentSleepDeep = 114;
+
+      const sleepDates = Object.keys(sleepMap).sort();
+      if (sleepDates.length > 0) {
+        const lastSleepDate = sleepDates[sleepDates.length - 1];
+        const sData = sleepMap[lastSleepDate];
+        currentSleepDeep = sData.deep;
+        const totalMinutes = sData.deep + sData.rem + sData.light;
+        currentSleepHours = (totalMinutes / 60).toFixed(1);
+        currentSleepScore = Math.min(100, Math.round(70 + (sData.deep / 120) * 20 + (sData.rem / 100) * 10));
+      } else {
+        for (let i = dataRows.length - 1; i >= 0; i--) {
+          const sc = cleanNum(dataRows[i][10]);
+          if (sc !== null && sc > 0) {
+            currentSleepScore = sc;
+            currentSleepHours = dataRows[i][11] || '6.9';
+            currentSleepDeep = cleanNum(dataRows[i][12]) || 75;
+            break;
+          }
         }
       }
 
-      // Buscar FC reposo más reciente
+      // 4. Buscar FC reposo más reciente
       let currentRHR = 48;
       for (let i = dataRows.length - 1; i >= 0; i--) {
         const fc = cleanNum(dataRows[i][13]);
-        if (fc > 0) { currentRHR = fc; break; }
+        if (fc !== null && fc > 0) { currentRHR = fc; break; }
       }
 
-      // Buscar macros más recientes
+      // 5. Buscar macros más recientes
       let currentProt = 51, currentCarbs = 116, currentFat = 28;
       let macroDate = latest[0];
       for (let i = dataRows.length - 1; i >= 0; i--) {
         const p = cleanNum(dataRows[i][14]);
-        if (p > 0) {
+        if (p !== null && p > 0) {
           currentProt = p;
           currentCarbs = cleanNum(dataRows[i][15]) || 116;
           currentFat = cleanNum(dataRows[i][16]) || 28;
@@ -766,10 +816,10 @@
       document.getElementById('kpiRHR').innerHTML = `${currentRHR} <span style="font-size: 0.95rem; color: var(--text-muted);">lpm</span>`;
       document.getElementById('kpiRHRSub').innerText = `FC Reposo: ${currentRHR} lpm | HRV: 107 ms | SpO2: 98%`;
 
-      document.getElementById('kpiWeight').innerHTML = `${currentWeight} <span style="font-size: 0.95rem; color: var(--text-muted);">kg</span>`;
-      const toGoal = (currentWeight - 60.0).toFixed(1);
+      document.getElementById('kpiWeight').innerHTML = `${currentWeight.toFixed(2)} <span style="font-size: 0.95rem; color: var(--text-muted);">kg</span>`;
+      const toGoal = (currentWeight - 60.0).toFixed(2);
       document.getElementById('kpiWeightSub').innerText = `Faltan ${toGoal > 0 ? toGoal : 0} kg para la meta (60.0 kg)`;
-      document.getElementById('userHeaderTag').innerText = `Juan Hurtado (${currentWeight} kg | 1.64 m)`;
+      document.getElementById('userHeaderTag').innerText = `Juan Hurtado (${currentWeight.toFixed(2)} kg | 1.64 m)`;
 
       // Actualizar tarjeta lateral de Macros
       document.getElementById('macroDateLabel').innerText = `Último registro (${macroDate}) · Meta: 1,750 kcal`;
@@ -785,16 +835,15 @@
       document.getElementById('boxRHR').innerHTML = `${currentRHR} <span style="font-size: 0.7rem;">lpm</span>`;
 
       // -------------------------------------------------------------
-      // PREPARAR DATOS PARA LAS 4 GRÁFICAS (Días recientes)
+      // 1. GRÁFICA 1: Peso vs Déficit (Días recientes de Registro Diario)
       // -------------------------------------------------------------
       const recentRows = dataRows.slice(-10);
       const labels = recentRows.map(r => r[0].length >= 10 ? r[0].slice(5) : r[0]);
 
-      // 1. GRÁFICA 1: Peso vs Déficit
       const weights = recentRows.map(r => cleanNum(r[1]) || null);
       const deficits = recentRows.map(r => {
         const val = cleanNum(r[6]) || cleanNum(r[5]);
-        return val !== 0 ? Math.abs(val) : 500;
+        return val !== null && val !== 0 ? Math.abs(val) : 500;
       });
 
       const ctxWeight = document.getElementById('weightDeficitChart').getContext('2d');
@@ -805,14 +854,14 @@
           labels: labels,
           datasets: [
             {
-              label: 'Peso (kg)',
+              label: 'Peso Real (kg)',
               data: weights,
               borderColor: '#38bdf8',
               backgroundColor: 'rgba(56, 189, 248, 0.1)',
               tension: 0.35,
               yAxisID: 'yPeso',
               fill: true,
-              pointRadius: 4,
+              pointRadius: 5,
               spanGaps: true
             },
             {
@@ -850,22 +899,39 @@
         }
       });
 
-      // 2. GRÁFICA 2: Arquitectura de Sueño (Profundo, REM, Ligero)
-      const deepSleep = recentRows.map(r => cleanNum(r[12]) || 70);
-      const remSleep = recentRows.map(r => Math.round((cleanNum(r[12]) || 70) * 0.85));
-      const lightSleep = recentRows.map(r => {
-        const totMin = Math.round((cleanNum(r[11]) || 7.0) * 60);
-        const deep = cleanNum(r[12]) || 70;
-        const rem = Math.round(deep * 0.85);
-        return Math.max(0, totMin - deep - rem);
-      });
+      // -------------------------------------------------------------
+      // 2. GRÁFICA 2: Arquitectura de Sueño (ALIMENTADA DESDE LA PESTAÑA 'Sleep')
+      // -------------------------------------------------------------
+      let sleepLabels = [];
+      let deepSleep = [];
+      let remSleep = [];
+      let lightSleep = [];
+
+      const availableSleepDates = Object.keys(sleepMap).sort();
+      if (availableSleepDates.length > 0) {
+        const targetDates = availableSleepDates.slice(-12);
+        sleepLabels = targetDates.map(d => d.slice(5)); // MM-DD
+        deepSleep = targetDates.map(d => sleepMap[d].deep);
+        remSleep = targetDates.map(d => sleepMap[d].rem);
+        lightSleep = targetDates.map(d => sleepMap[d].light);
+      } else {
+        sleepLabels = labels;
+        deepSleep = recentRows.map(r => cleanNum(r[12]) || 70);
+        remSleep = recentRows.map(r => Math.round((cleanNum(r[12]) || 70) * 0.85));
+        lightSleep = recentRows.map(r => {
+          const totMin = Math.round((cleanNum(r[11]) || 7.0) * 60);
+          const deep = cleanNum(r[12]) || 70;
+          const rem = Math.round(deep * 0.85);
+          return Math.max(0, totMin - deep - rem);
+        });
+      }
 
       const ctxSleep = document.getElementById('sleepChart').getContext('2d');
       if (sleepChart) sleepChart.destroy();
       sleepChart = new Chart(ctxSleep, {
         type: 'bar',
         data: {
-          labels: labels,
+          labels: sleepLabels,
           datasets: [
             { label: 'Sueño Profundo (min)', data: deepSleep, backgroundColor: '#a855f7' },
             { label: 'Sueño REM (min)', data: remSleep, backgroundColor: '#38bdf8' },
@@ -899,7 +965,9 @@
         }
       });
 
+      // -------------------------------------------------------------
       // 3. GRÁFICA 3: Pasos Diarios vs Meta (10,000)
+      // -------------------------------------------------------------
       const stepsData = recentRows.map(r => cleanNum(r[7]) || 5500);
 
       const ctxActivity = document.getElementById('activityChart').getContext('2d');
@@ -942,7 +1010,9 @@
         }
       });
 
+      // -------------------------------------------------------------
       // 4. GRÁFICA 4: FC en Reposo vs HRV
+      // -------------------------------------------------------------
       const fcData = recentRows.map(r => cleanNum(r[13]) || 48);
       const hrvData = [107.5, 100.3, 89.8, 94.2, 98.0, 102.1, 95.4, 105.0, 104.5, 107.0];
 
