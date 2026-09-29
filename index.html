@@ -61,6 +61,33 @@
       font-weight: 600;
     }
 
+    .sync-status {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(16, 185, 129, 0.1);
+      color: var(--accent-green);
+      border: 1px solid rgba(16, 185, 129, 0.25);
+      padding: 6px 14px;
+      border-radius: 999px;
+      font-size: 0.82rem;
+      font-weight: 600;
+    }
+
+    .sync-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--accent-green);
+      animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+      0% { transform: scale(0.95); opacity: 0.8; }
+      50% { transform: scale(1.2); opacity: 1; }
+      100% { transform: scale(0.95); opacity: 0.8; }
+    }
+
     .grid-kpis {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
@@ -145,67 +172,35 @@
     .progress-bar-fill {
       height: 100%;
       border-radius: 999px;
+      transition: width 0.5s ease;
     }
 
-    .form-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-      gap: 14px;
+    .data-table-container {
+      overflow-x: auto;
       margin-top: 16px;
     }
 
-    .input-group label {
-      display: block;
-      font-size: 0.78rem;
-      font-weight: 600;
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.85rem;
+    }
+
+    th, td {
+      padding: 10px 14px;
+      text-align: left;
+      border-bottom: 1px solid var(--card-border);
+    }
+
+    th {
       color: var(--text-muted);
-      margin-bottom: 6px;
+      font-weight: 600;
+      font-size: 0.75rem;
+      text-transform: uppercase;
     }
 
-    .input-group input {
-      width: 100%;
-      background: #0b0f19;
-      border: 1px solid var(--card-border);
-      color: #fff;
-      padding: 10px 12px;
-      border-radius: 8px;
-      font-size: 0.95rem;
-    }
-
-    .input-group input:focus {
-      outline: none;
-      border-color: var(--accent-blue);
-    }
-
-    .btn-submit {
-      background: var(--accent-blue);
-      color: #0b0f19;
-      font-weight: 700;
-      border: none;
-      border-radius: 8px;
-      padding: 12px 24px;
-      cursor: pointer;
-      margin-top: 18px;
-      width: 100%;
-      transition: all 0.2s ease;
-    }
-
-    .btn-submit:hover {
-      opacity: 0.9;
-      transform: translateY(-1px);
-    }
-
-    .sync-banner {
-      background: rgba(168, 85, 247, 0.08);
-      border: 1px solid rgba(168, 85, 247, 0.25);
-      border-radius: 12px;
-      padding: 14px 18px;
-      margin-bottom: 20px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      flex-wrap: wrap;
-      gap: 12px;
+    tr:hover {
+      background: rgba(255, 255, 255, 0.02);
     }
   </style>
 </head>
@@ -214,53 +209,45 @@
     <header>
       <div>
         <h1 style="font-size: 1.5rem; font-weight: 800;">Registro de Rendimiento & Déficit</h1>
-        <p style="color: var(--text-muted); font-size: 0.85rem; margin-top: 2px;">Sincronización Zepp (Amazfit Bip 6) & Registro Diario</p>
+        <p style="color: var(--text-muted); font-size: 0.85rem; margin-top: 2px;">Sincronización en Vivo Zepp (Amazfit Bip 6) & Google Sheets</p>
       </div>
-      <div style="display: flex; gap: 10px; align-items: center;">
+      <div style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap;">
+        <span class="sync-status"><span class="sync-dot"></span> Sincronizado en Vivo</span>
         <span class="user-tag">Juan Hurtado (64.3 kg | 1.64 m)</span>
       </div>
     </header>
-
-    <!-- Sync status banner -->
-    <div class="sync-banner">
-      <div>
-        <div style="font-weight: 700; color: var(--accent-purple); font-size: 0.9rem;">🔄 Pipeline de Sincronización Zepp Activo</div>
-        <div style="font-size: 0.8rem; color: var(--text-muted); margin-top: 2px;">Amazfit Bip 6 ➔ App Zepp ➔ Health Connect ➔ Google Sheets ➔ Web App</div>
-      </div>
-      <a href="https://docs.google.com/spreadsheets/d/1S2Ov9hMtIm6UrI8uuvuDXNJNiUhbHV6lZ-fM-gu69UE/edit" target="_blank" style="color: var(--accent-blue); text-decoration: none; font-size: 0.85rem; font-weight: 600;">Abrir Google Sheet ↗</a>
-    </div>
 
     <!-- Top KPIs -->
     <div class="grid-kpis">
       <div class="card">
         <div class="card-title">Balance Calórico Hoy</div>
-        <div class="card-value" style="color: var(--accent-green);" id="kpiNetDeficit">-520 kcal</div>
-        <div class="card-subtext">Consumidas: 1,780 | Quemadas: 2,300</div>
+        <div class="card-value" style="color: var(--accent-green);" id="kpiNetDeficit">- kcal</div>
+        <div class="card-subtext" id="kpiCalSub">Cargando datos...</div>
       </div>
       <div class="card">
         <div class="card-title">Pasos (Amazfit Zepp)</div>
-        <div class="card-value" style="color: var(--accent-blue);" id="kpiSteps">10,420</div>
+        <div class="card-value" style="color: var(--accent-blue);" id="kpiSteps">-</div>
         <div class="card-subtext">Meta: 10,000 pasos / día</div>
       </div>
       <div class="card">
         <div class="card-title">Calidad de Sueño Zepp</div>
-        <div class="card-value" style="color: var(--accent-purple);" id="kpiSleepScore">87 <span style="font-size: 1rem; color: var(--text-muted);">/100</span></div>
-        <div class="card-subtext">7h 24m total | 1h 35m sueño profundo</div>
+        <div class="card-value" style="color: var(--accent-purple);" id="kpiSleepScore">- <span style="font-size: 1rem; color: var(--text-muted);">/100</span></div>
+        <div class="card-subtext" id="kpiSleepSub">Calculando...</div>
       </div>
       <div class="card">
         <div class="card-title">FC Reposo & Peso</div>
-        <div class="card-value" style="color: var(--accent-orange);" id="kpiWeight">64.3 kg</div>
-        <div class="card-subtext">FC Reposo: 54 lpm | Promedio 7d: 64.3 kg</div>
+        <div class="card-value" style="color: var(--accent-orange);" id="kpiWeight">- kg</div>
+        <div class="card-subtext" id="kpiRHRSub">FC Reposo: - lpm</div>
       </div>
     </div>
 
-    <!-- Main Content Grid -->
+    <!-- Main Grid -->
     <div class="grid-main">
-      <!-- Chart Card -->
+      <!-- Dynamic Chart -->
       <div class="card">
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
           <h2 style="font-size: 1.1rem; font-weight: 700;">Evolución de Peso y Déficit Acumulado</h2>
-          <span style="font-size: 0.78rem; color: var(--text-muted);">Métricas Diarias</span>
+          <span style="font-size: 0.78rem; color: var(--text-muted);" id="chartRange">Historial Google Sheets</span>
         </div>
         <div style="height: 280px; position: relative;">
           <canvas id="trendChart"></canvas>
@@ -276,107 +263,86 @@
           <div class="macro-item">
             <div class="macro-labels">
               <span><strong>Proteína</strong> (116g obj)</span>
-              <span id="protStatus">95g / 116g</span>
+              <span id="protStatus">-- / 116g</span>
             </div>
             <div class="progress-bar-bg">
-              <div class="progress-bar-fill" style="width: 82%; background: var(--accent-blue);"></div>
+              <div class="progress-bar-fill" id="protBar" style="width: 0%; background: var(--accent-blue);"></div>
             </div>
           </div>
 
           <div class="macro-item">
             <div class="macro-labels">
               <span><strong>Carbohidratos</strong> (200g obj)</span>
-              <span id="carbsStatus">170g / 200g</span>
+              <span id="carbsStatus">-- / 200g</span>
             </div>
             <div class="progress-bar-bg">
-              <div class="progress-bar-fill" style="width: 85%; background: var(--accent-green);"></div>
+              <div class="progress-bar-fill" id="carbsBar" style="width: 0%; background: var(--accent-green);"></div>
             </div>
           </div>
 
           <div class="macro-item">
             <div class="macro-labels">
               <span><strong>Grasas</strong> (54g obj)</span>
-              <span id="fatStatus">45g / 54g</span>
+              <span id="fatStatus">-- / 54g</span>
             </div>
             <div class="progress-bar-bg">
-              <div class="progress-bar-fill" style="width: 83%; background: var(--accent-orange);"></div>
+              <div class="progress-bar-fill" id="fatBar" style="width: 0%; background: var(--accent-orange);"></div>
             </div>
           </div>
         </div>
 
         <div style="margin-top: 24px; padding-top: 16px; border-top: 1px solid var(--card-border);">
           <div class="zepp-badge">⌚ Métricas de Recuperación (Zepp)</div>
-          <div style="font-size: 0.82rem; color: var(--text-muted); line-height: 1.6;">
-            • Puntuación de Sueño: <strong>87 / 100</strong><br>
-            • Sueño Profundo: <strong>1h 35m (21%)</strong><br>
-            • FC Reposo al despertar: <strong>54 lpm</strong><br>
-            • Regularidad circadiana: <strong>Óptima</strong>
+          <div style="font-size: 0.82rem; color: var(--text-muted); line-height: 1.6;" id="zeppSleepDetails">
+            • Puntuación de Sueño: <strong id="zeppScoreDetail">-</strong><br>
+            • Horas de Sueño: <strong id="zeppHoursDetail">-</strong><br>
+            • Sueño Profundo: <strong id="zeppDeepDetail">-</strong><br>
+            • FC Reposo al despertar: <strong id="zeppRHRDetail">-</strong>
           </div>
         </div>
       </div>
     </div>
 
-    <!-- Quick Entry Form -->
+    <!-- Live Records Table -->
     <div class="card">
-      <h2 style="font-size: 1.1rem; font-weight: 700; margin-bottom: 4px;">Ingreso Manual / Sincronización</h2>
-      <p style="font-size: 0.8rem; color: var(--text-muted);">Los datos ingresados se guardan localmente y se transmiten a tu Google Sheet.</p>
-
-      <form id="trackerForm">
-        <div class="form-grid">
-          <div class="input-group">
-            <label>Fecha</label>
-            <input type="date" id="inputDate" required>
-          </div>
-          <div class="input-group">
-            <label>Peso (kg)</label>
-            <input type="number" step="0.1" id="inputWeight" placeholder="64.3">
-          </div>
-          <div class="input-group">
-            <label>Calorías Ingeridas</label>
-            <input type="number" id="inputCaloriesIn" placeholder="1750">
-          </div>
-          <div class="input-group">
-            <label>Calorías Quemadas (Zepp)</label>
-            <input type="number" id="inputCaloriesOut" placeholder="2300">
-          </div>
-          <div class="input-group">
-            <label>Pasos Diarios (Zepp)</label>
-            <input type="number" id="inputSteps" placeholder="10500">
-          </div>
-          <div class="input-group">
-            <label>Puntuación Sueño Zepp (0-100)</label>
-            <input type="number" id="inputSleepScore" placeholder="85">
-          </div>
-          <div class="input-group">
-            <label>Horas de Sueño</label>
-            <input type="text" id="inputSleepHours" placeholder="7.5">
-          </div>
-          <div class="input-group">
-            <label>Sueño Profundo (min)</label>
-            <input type="number" id="inputDeepSleep" placeholder="95">
-          </div>
-          <div class="input-group">
-            <label>FC Reposo (lpm)</label>
-            <input type="number" id="inputRHR" placeholder="54">
-          </div>
-        </div>
-        <button type="submit" class="btn-submit">Guardar Registro en Base de Datos / Sheet</button>
-      </form>
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+        <h2 style="font-size: 1.1rem; font-weight: 700;">Últimos Registros del Spreadsheet</h2>
+        <a href="https://docs.google.com/spreadsheets/d/1S2Ov9hMtIm6UrI8uuvuDXNJNiUhbHV6lZ-fM-gu69UE/edit" target="_blank" style="color: var(--accent-blue); text-decoration: none; font-size: 0.8rem; font-weight: 600;">Abrir en Google Sheets ↗</a>
+      </div>
+      <div class="data-table-container">
+        <table id="recordsTable">
+          <thead>
+            <tr>
+              <th>Fecha</th>
+              <th>Peso (kg)</th>
+              <th>Cal. Consumidas</th>
+              <th>Cal. Quemadas</th>
+              <th>Déficit Neto</th>
+              <th>Pasos Zepp</th>
+              <th>Sueño</th>
+              <th>FC Reposo</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td colspan="8" style="text-align: center; color: var(--text-muted);">Sincronizando con Google Sheets...</td></tr>
+          </tbody>
+        </table>
+      </div>
     </div>
   </div>
 
   <script>
-    document.getElementById('inputDate').valueAsDate = new Date();
+    const CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSeFjCUBUQWoZ1zv0hb78Z0iKztvRo_OeGgDGXFiiNuFIZWd77uA3mbwpAIGEhpGrcOPVxiwSy31IMs/pub?output=csv";
 
     const ctx = document.getElementById('trendChart').getContext('2d');
-    const trendChart = new Chart(ctx, {
+    let trendChart = new Chart(ctx, {
       type: 'line',
       data: {
-        labels: ['Día 1', 'Día 2', 'Día 3', 'Día 4', 'Día 5', 'Día 6', 'Día 7', 'Día 8', 'Día 9', 'Día 10', 'Día 11', 'Día 12', 'Día 13', 'Hoy'],
+        labels: [],
         datasets: [
           {
             label: 'Peso Real (kg)',
-            data: [64.9, 64.8, 64.7, 64.7, 64.6, 64.5, 64.5, 64.4, 64.4, 64.3, 64.4, 64.3, 64.2, 64.3],
+            data: [],
             borderColor: '#38bdf8',
             backgroundColor: 'rgba(56, 189, 248, 0.1)',
             tension: 0.3,
@@ -385,7 +351,7 @@
           },
           {
             label: 'Déficit Calórico Diario (kcal)',
-            data: [450, 520, 480, 550, 400, 600, 500, 480, 510, 530, 470, 520, 540, 520],
+            data: [],
             borderColor: '#10b981',
             backgroundColor: 'rgba(16, 185, 129, 0.8)',
             type: 'bar',
@@ -409,8 +375,6 @@
           y: {
             type: 'linear',
             position: 'left',
-            min: 63.5,
-            max: 65.5,
             grid: { color: 'rgba(255, 255, 255, 0.05)' },
             ticks: { color: '#38bdf8' }
           },
@@ -424,10 +388,109 @@
       }
     });
 
-    document.getElementById('trackerForm').addEventListener('submit', (e) => {
-      e.preventDefault();
-      alert('¡Datos guardados con éxito!');
-    });
+    function parseCSV(text) {
+      const lines = text.trim().split(/\r?\n/);
+      return lines.map(line => {
+        const row = [];
+        let inQuotes = false;
+        let entry = '';
+        for (let i = 0; i < line.length; i++) {
+          const c = line[i];
+          if (c === '"') {
+            inQuotes = !inQuotes;
+          } else if (c === ',' && !inQuotes) {
+            row.push(entry.trim());
+            entry = '';
+          } else {
+            entry += c;
+          }
+        }
+        row.push(entry.trim());
+        return row;
+      });
+    }
+
+    async function loadSheetData() {
+      try {
+        const response = await fetch(CSV_URL);
+        const text = await response.text();
+        const rows = parseCSV(text);
+
+        let dataRows = [];
+        for (let i = 0; i < rows.length; i++) {
+          const row = rows[i];
+          if (row.length > 2 && (row[0].includes('/') || row[0].includes('-') || !isNaN(Date.parse(row[0])))) {
+            dataRows.push(row);
+          }
+        }
+
+        if (dataRows.length === 0) {
+          dataRows = rows.filter(r => r.length >= 4 && r[0] !== '');
+        }
+
+        updateUI(dataRows);
+      } catch (err) {
+        console.error('Error fetching CSV:', err);
+      }
+    }
+
+    function updateUI(dataRows) {
+      if (!dataRows || dataRows.length === 0) return;
+
+      const latest = dataRows[dataRows.length - 1];
+
+      const date = latest[0] || 'Hoy';
+      const weight = parseFloat(latest[1]) || 64.3;
+      const calIn = parseInt(latest[3]) || 640;
+      const calOut = parseInt(latest[4]) || 0;
+      const netDeficit = latest[5] ? latest[5] : (calOut > 0 ? (calIn - calOut) + ' kcal' : '- kcal');
+      const steps = latest[7] || '--';
+      const sleepScore = latest[10] || '--';
+      const sleepHours = latest[11] || '--';
+      const sleepDeep = latest[12] || '--';
+      const rhr = latest[13] || '--';
+
+      document.getElementById('kpiNetDeficit').innerText = netDeficit.toString().includes('kcal') ? netDeficit : netDeficit + ' kcal';
+      document.getElementById('kpiCalSub').innerText = `Consumidas: ${calIn} | Quemadas: ${calOut || '--'}`;
+      document.getElementById('kpiSteps').innerText = !isNaN(steps) ? Number(steps).toLocaleString() : steps;
+      document.getElementById('kpiSleepScore').innerHTML = `${sleepScore} <span style="font-size: 1rem; color: var(--text-muted);">/100</span>`;
+      document.getElementById('kpiSleepSub').innerText = `${sleepHours} total | ${sleepDeep} profundo`;
+      document.getElementById('kpiWeight').innerText = `${weight} kg`;
+      document.getElementById('kpiRHRSub').innerText = `FC Reposo: ${rhr} lpm`;
+
+      document.getElementById('zeppScoreDetail').innerText = `${sleepScore} / 100`;
+      document.getElementById('zeppHoursDetail').innerText = sleepHours;
+      document.getElementById('zeppDeepDetail').innerText = sleepDeep;
+      document.getElementById('zeppRHRDetail').innerText = `${rhr} lpm`;
+
+      const labels = dataRows.map(r => r[0]);
+      const weights = dataRows.map(r => parseFloat(r[1]) || 64.3);
+      const deficits = dataRows.map(r => Math.abs(parseInt(r[6]) || parseInt(r[5]) || 0));
+
+      trendChart.data.labels = labels;
+      trendChart.data.datasets[0].data = weights;
+      trendChart.data.datasets[1].data = deficits;
+      trendChart.update();
+
+      const tbody = document.querySelector('#recordsTable tbody');
+      tbody.innerHTML = '';
+      dataRows.slice(-10).reverse().forEach(row => {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td><strong>${row[0] || '-'}</strong></td>
+          <td>${row[1] || '-'} kg</td>
+          <td>${row[3] || '-'}</td>
+          <td>${row[4] || '-'}</td>
+          <td style="color: var(--accent-green); font-weight: 600;">${row[5] || row[6] || '-'}</td>
+          <td>${row[7] || '-'}</td>
+          <td>${row[10] || '-'} (${row[11] || '-'})</td>
+          <td>${row[13] || '-'} lpm</td>
+        `;
+        tbody.appendChild(tr);
+      });
+    }
+
+    loadSheetData();
   </script>
 </body>
 </html>
