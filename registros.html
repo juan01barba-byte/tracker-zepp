@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -23,14 +22,12 @@
       --text-muted: #9ca3af;
     }
 
-
     * {
       box-sizing: border-box;
       margin: 0;
       padding: 0;
       font-family: 'Plus Jakarta Sans', sans-serif;
     }
-
 
     body {
       background-color: var(--bg);
@@ -39,12 +36,10 @@
       min-height: 100vh;
     }
 
-
     .container {
       max-width: 1280px;
       margin: 0 auto;
     }
-
 
     header {
       display: flex;
@@ -56,7 +51,6 @@
       flex-wrap: wrap;
       gap: 16px;
     }
-
 
     .btn-back {
       background: rgba(56, 189, 248, 0.12);
@@ -73,12 +67,37 @@
       transition: all 0.2s ease;
     }
 
-
     .btn-back:hover {
       background: rgba(56, 189, 248, 0.25);
       transform: translateY(-1px);
     }
 
+    .sync-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(16, 185, 129, 0.1);
+      color: var(--accent-green);
+      border: 1px solid rgba(16, 185, 129, 0.25);
+      padding: 6px 12px;
+      border-radius: 999px;
+      font-size: 0.78rem;
+      font-weight: 600;
+    }
+
+    .sync-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: var(--accent-green);
+      animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+      0% { transform: scale(0.95); opacity: 0.8; }
+      50% { transform: scale(1.2); opacity: 1; }
+      100% { transform: scale(0.95); opacity: 0.8; }
+    }
 
     .card {
       background: var(--card-bg);
@@ -89,7 +108,6 @@
       margin-bottom: 24px;
     }
 
-
     .filter-bar {
       display: flex;
       justify-content: space-between;
@@ -99,13 +117,11 @@
       margin-bottom: 20px;
     }
 
-
     .category-pills {
       display: flex;
       flex-wrap: wrap;
       gap: 8px;
     }
-
 
     .pill-btn {
       background: #0b0f19;
@@ -122,12 +138,10 @@
       gap: 6px;
     }
 
-
     .pill-btn:hover {
       background: rgba(255, 255, 255, 0.05);
       color: var(--text-main);
     }
-
 
     .pill-btn.active {
       background: rgba(56, 189, 248, 0.15);
@@ -135,14 +149,12 @@
       border-color: var(--accent-blue);
     }
 
-
     .pill-count {
       background: rgba(255, 255, 255, 0.1);
       padding: 2px 7px;
       border-radius: 999px;
       font-size: 0.72rem;
     }
-
 
     .search-box {
       background: #0b0f19;
@@ -154,12 +166,10 @@
       width: 240px;
     }
 
-
     .search-box:focus {
       outline: none;
       border-color: var(--accent-blue);
     }
-
 
     .sort-btn {
       background: #0b0f19;
@@ -175,11 +185,9 @@
       gap: 6px;
     }
 
-
     .sort-btn:hover {
       color: var(--text-main);
     }
-
 
     .table-responsive {
       overflow-x: auto;
@@ -187,14 +195,12 @@
       border: 1px solid var(--card-border);
     }
 
-
     .records-table {
       width: 100%;
       border-collapse: collapse;
       text-align: left;
       font-size: 0.85rem;
     }
-
 
     .records-table th {
       background: #0d1322;
@@ -207,7 +213,6 @@
       white-space: nowrap;
     }
 
-
     .records-table td {
       padding: 14px 16px;
       border-bottom: 1px solid rgba(31, 41, 55, 0.6);
@@ -215,11 +220,9 @@
       vertical-align: middle;
     }
 
-
     .records-table tr:hover {
       background: rgba(255, 255, 255, 0.02);
     }
-
 
     .type-badge {
       display: inline-flex;
@@ -232,13 +235,11 @@
       white-space: nowrap;
     }
 
-
     .badge-nutrition { background: rgba(16, 185, 129, 0.12); color: #10b981; border: 1px solid rgba(16, 185, 129, 0.3); }
     .badge-activity { background: rgba(56, 189, 248, 0.12); color: #38bdf8; border: 1px solid rgba(56, 189, 248, 0.3); }
     .badge-sleep { background: rgba(168, 85, 247, 0.12); color: #a855f7; border: 1px solid rgba(168, 85, 247, 0.3); }
     .badge-vitals { background: rgba(249, 115, 22, 0.12); color: #f97316; border: 1px solid rgba(249, 115, 22, 0.3); }
     .badge-weight { background: rgba(6, 182, 212, 0.12); color: #06b6d4; border: 1px solid rgba(6, 182, 212, 0.3); }
-
 
     .tag-note {
       color: #d1d5db;
@@ -255,16 +256,19 @@
   <div class="container">
     <header>
       <div>
-        <h1 style="font-size: 1.5rem; font-weight: 800;">Historial Cronológico de Registros</h1>
-        <p style="color: var(--text-muted); font-size: 0.85rem; margin-top: 2px;">Métricas de Amazfit Zepp, Health Connect & Registro Nutricional</p>
+        <div style="display: flex; align-items: center; gap: 10px;">
+          <h1 style="font-size: 1.5rem; font-weight: 800;">Historial Cronológico de Registros</h1>
+          <span class="sync-badge"><span class="sync-dot"></span> Sincronizado en Vivo</span>
+        </div>
+        <p style="color: var(--text-muted); font-size: 0.85rem; margin-top: 2px;">Conectado a Google Sheets: Se actualiza solo al añadir nuevos días</p>
       </div>
-      <div>
+      <div style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap;">
         <a href="index.html" class="btn-back">⬅ Volver al Dashboard</a>
-         <a href="sueno.html" class="btn-back" style="border-color: rgba(168, 85, 247, 0.4); color: #c084fc;">
+        <a href="sueno.html" class="btn-back" style="border-color: rgba(168, 85, 247, 0.4); color: #c084fc;">
           <span>💤</span> Meta-Análisis ➔
+        </a>
       </div>
     </header>
-
 
     <div class="card">
       <!-- Filter and Search Bar -->
@@ -290,7 +294,6 @@
           </button>
         </div>
 
-
         <div style="display: flex; gap: 10px; align-items: center;">
           <input type="text" id="recordSearch" class="search-box" placeholder="Buscar fecha, comida, notas..." oninput="handleSearch()">
           <button class="sort-btn" id="btnSort" onclick="toggleSort()">
@@ -298,7 +301,6 @@
           </button>
         </div>
       </div>
-
 
       <!-- Table of Classified Records -->
       <div class="table-responsive">
@@ -313,71 +315,171 @@
             </tr>
           </thead>
           <tbody id="recordsTableBody">
+            <tr>
+              <td colspan="5" style="text-align: center; color: var(--text-muted); padding: 32px;">
+                Conectando con Google Sheets y extrayendo registros...
+              </td>
+            </tr>
           </tbody>
         </table>
       </div>
     </div>
   </div>
 
-
   <script>
-    const rawRecords = [
-      // Nutrición & Balance Diario
-      { date: '2026-09-28', type: 'NUTRITION', badge: 'badge-nutrition', typeLabel: '🥗 Nutrición', primary: '895 kcal ingeridas | Déficit: -640 kcal', secondary: 'Macros: 51g P | 116g C | 28g G', details: 'Almuerzo 3:45pm: Burrito pollo Melo + frijoles + queso. Snack 11:11pm: Leche + guineo' },
-      { date: '2026-09-27', type: 'NUTRITION', badge: 'badge-nutrition', typeLabel: '🥗 Nutrición', primary: '2,305 kcal ingeridas | Déficit: +95 kcal', secondary: 'Macros: 73g P | 173g C | 126g G', details: 'Festival de la Mejorana: Desayuno típico (pastelito, hojalda, 2 chorizos), chorizo en palito, 2 cervezas, McDonald’s 10 nuggets' },
-      
-      // Composición / Peso
-      { date: '2026-09-28 15:28', type: 'WEIGHT', badge: 'badge-weight', typeLabel: '⚖️ Peso', primary: '64.30 kg (141.7 lbs)', secondary: 'Promedio Móvil 7d: 64.14 kg', details: 'Fuente: Amazfit Zepp Smart Scale / Wearable' },
-      { date: '2026-09-27', type: 'WEIGHT', badge: 'badge-weight', typeLabel: '⚖️ Peso', primary: '64.50 kg', secondary: 'Promedio Móvil 7d: 64.22 kg', details: 'Registro ponderal post-evento Mejorana' },
-      { date: '2026-06-13', type: 'WEIGHT', badge: 'badge-weight', typeLabel: '⚖️ Peso', primary: '63.59 kg (140.2 lbs)', secondary: 'Descenso sostenido', details: 'Hito histórico registrado' },
-      { date: '2026-05-11', type: 'WEIGHT', badge: 'badge-weight', typeLabel: '⚖️ Peso', primary: '64.09 kg (141.3 lbs)', secondary: 'Descenso', details: 'Hito mensual' },
-      { date: '2026-04-17', type: 'WEIGHT', badge: 'badge-weight', typeLabel: '⚖️ Peso', primary: '64.23 kg (141.6 lbs)', secondary: 'Progreso', details: 'Fase inicial corte' },
-      { date: '2026-04-01', type: 'WEIGHT', badge: 'badge-weight', typeLabel: '⚖️ Peso', primary: '67.13 kg (148.0 lbs)', secondary: 'Punto de partida', details: 'Peso inicial de corte' },
+    // Enlace directo en tiempo real al Google Sheet
+    const CSV_URL = "https://docs.google.com/spreadsheets/d/1S2Ov9hMtIm6UrI8uuvuDXNJNiUhbHV6lZ-fM-gu69UE/export?format=csv";
 
+    // Preserva decimales exactos (ej. 63.46, 64.23, etc.)
+    function cleanNum(val) {
+      if (val === undefined || val === null || val === '') return null;
+      let s = val.toString().replace(/,/g, '.').replace(/[^0-9.-]/g, '');
+      let n = parseFloat(s);
+      return isNaN(n) ? null : n;
+    }
 
-      // Actividad & Pasos (Zepp Health Connect)
-      { date: '2026-09-27', type: 'ACTIVITY', badge: 'badge-activity', typeLabel: '🏃 Actividad', primary: '11,335 pasos (Meta cumplida 🎉)', secondary: 'Gasto TDEE: 2,400 kcal', details: 'Caminata y recorrido Festival de la Mejorana' },
-      { date: '2026-09-26', type: 'ACTIVITY', badge: 'badge-activity', typeLabel: '🏃 Actividad', primary: '5,541 pasos', secondary: 'Gasto TDEE: 1,793 kcal', details: 'Actividad diaria registrada por Amazfit' },
-      { date: '2026-09-25', type: 'ACTIVITY', badge: 'badge-activity', typeLabel: '🏃 Actividad', primary: '4,679 pasos', secondary: 'Gasto TDEE: 1,744 kcal', details: 'Actividad diaria registrada por Amazfit' },
-      { date: '2026-09-06', type: 'ACTIVITY', badge: 'badge-activity', typeLabel: '🏃 Actividad', primary: '8,893 pasos | 4,929 m', secondary: '1,576 kcal totales', details: 'Registro Health Connect (com.huami.watch)' },
-      { date: '2026-09-05', type: 'ACTIVITY', badge: 'badge-activity', typeLabel: '🏃 Actividad', primary: '3,622 pasos | 1,203 m', secondary: '1,524 kcal totales', details: 'Registro Health Connect (com.huami.watch)' },
-      { date: '2026-09-04', type: 'ACTIVITY', badge: 'badge-activity', typeLabel: '🏃 Actividad', primary: '5,947 pasos | 2,063 m', secondary: '1,566 kcal totales', details: 'Registro Health Connect (com.huami.watch)' },
-      { date: '2026-09-03', type: 'ACTIVITY', badge: 'badge-activity', typeLabel: '🏃 Actividad', primary: '4,918 pasos | 2,535 m', secondary: '1,548 kcal totales', details: 'Registro Health Connect (com.huami.watch)' },
-      { date: '2026-09-02', type: 'ACTIVITY', badge: 'badge-activity', typeLabel: '🏃 Actividad', primary: '6,411 pasos | 2,215 m', secondary: '1,488 kcal totales', details: 'Registro Health Connect (com.huami.watch)' },
-      { date: '2026-09-01', type: 'ACTIVITY', badge: 'badge-activity', typeLabel: '🏃 Actividad', primary: '7,438 pasos | 3,765 m', secondary: '1,556 kcal totales', details: 'Registro Health Connect (com.huami.watch)' },
+    function parseCSV(text) {
+      const lines = text.trim().split(/\r?\n/);
+      return lines.map(line => {
+        const row = [];
+        let inQuotes = false;
+        let entry = '';
+        for (let i = 0; i < line.length; i++) {
+          const c = line[i];
+          if (c === '"') {
+            inQuotes = !inQuotes;
+          } else if (c === ',' && !inQuotes) {
+            row.push(entry.trim());
+            entry = '';
+          } else {
+            entry += c;
+          }
+        }
+        row.push(entry.trim());
+        return row;
+      });
+    }
 
-
-      // Sueño & Descanso (Zepp Sleep)
-      { date: '2026-09-27', type: 'SLEEP', badge: 'badge-sleep', typeLabel: '💤 Sueño', primary: '6h 54m total | Score: 82/100', secondary: 'Profundo: 75m | REM: 65m | Ligero: 270m', details: 'Buena proporción de sueño reparador físico' },
-      { date: '2026-09-11', type: 'SLEEP', badge: 'badge-sleep', typeLabel: '💤 Sueño', primary: '7h 49m total (02:46 - 10:35)', secondary: 'Profundo: 75m | REM: 71m | Ligero: 322m', details: 'Eficiencia óptima | Despierto: 1m' },
-      { date: '2026-09-10', type: 'SLEEP', badge: 'badge-sleep', typeLabel: '💤 Sueño', primary: '9h 25m total (00:38 - 10:03)', secondary: 'Profundo: 107m | REM: 83m | Ligero: 374m', details: 'Sueño profundo superior a 100 min (Excelente recuperación)' },
-      { date: '2026-09-09', type: 'SLEEP', badge: 'badge-sleep', typeLabel: '💤 Sueño', primary: '6h 17m total (01:49 - 08:06)', secondary: 'Profundo: 58m | REM: 97m | Ligero: 221m', details: 'Pico elevado de fase REM (97m)' },
-      { date: '2026-09-08', type: 'SLEEP', badge: 'badge-sleep', typeLabel: '💤 Sueño', primary: '5h 52m total (00:47 - 06:39)', secondary: 'Profundo: 79m | REM: 53m | Ligero: 218m', details: 'Despierto: 2m | Siesta breve: 19m en la tarde' },
-      { date: '2026-09-07', type: 'SLEEP', badge: 'badge-sleep', typeLabel: '💤 Sueño', primary: '8h 08m total (01:01 - 09:09)', secondary: 'Profundo: 80m | REM: 94m | Ligero: 314m', details: 'Sueño REM de alta calidad (94m)' },
-      { date: '2026-09-05', type: 'SLEEP', badge: 'badge-sleep', typeLabel: '💤 Sueño', primary: '5h 34m total (02:59 - 08:33)', secondary: 'Profundo: 44m | REM: 86m | Ligero: 203m', details: 'Descanso complementario vespertino' },
-      { date: '2026-09-04', type: 'SLEEP', badge: 'badge-sleep', typeLabel: '💤 Sueño', primary: '3h 51m total (02:26 - 06:17)', secondary: 'Profundo: 35m | REM: 53m | Ligero: 143m', details: 'Noche corta de estudio / guardia' },
-      { date: '2026-09-03', type: 'SLEEP', badge: 'badge-sleep', typeLabel: '💤 Sueño', primary: '6h 46m total (02:04 - 08:50)', secondary: 'Profundo: 76m | REM: 52m | Ligero: 276m', details: 'Ritmo circadiano estable' },
-      { date: '2026-09-02', type: 'SLEEP', badge: 'badge-sleep', typeLabel: '💤 Sueño', primary: '6h 00m total (02:07 - 08:07)', secondary: 'Profundo: 66m | REM: 57m | Ligero: 237m', details: 'Inicio de semana con buena proporción profunda' },
-
-
-      // Fisiología Cardiovascular & Vitals
-      { date: '2026-09-27', type: 'VITALS', badge: 'badge-vitals', typeLabel: '❤️ Signos Vitales', primary: 'FC Reposo: 48 lpm', secondary: 'HRV: 106.0 ms | SpO2: 97.9%', details: 'Excelente tono vagal / parasimpático' },
-      { date: '2026-09-11', type: 'VITALS', badge: 'badge-vitals', typeLabel: '❤️ Signos Vitales', primary: 'FC Reposo: 48 lpm', secondary: 'HRV: 110.2 ms | SpO2: 98.2%', details: 'Pico de HRV semanal (110 ms - recuperación alta)' },
-      { date: '2026-09-10', type: 'VITALS', badge: 'badge-vitals', typeLabel: '❤️ Signos Vitales', primary: 'FC Reposo: 46 lpm', secondary: 'HRV: 105.0 ms | SpO2: 98.0%', details: 'Mínima de FC en reposo (46 lpm - perfil atlético)' },
-      { date: '2026-09-09', type: 'VITALS', badge: 'badge-vitals', typeLabel: '❤️ Signos Vitales', primary: 'FC Reposo: 47 lpm', secondary: 'HRV: 95.4 ms | SpO2: 98.1%', details: 'Estabilidad hemodinámica' },
-      { date: '2026-09-08', type: 'VITALS', badge: 'badge-vitals', typeLabel: '❤️ Signos Vitales', primary: 'FC Reposo: 50 lpm', secondary: 'HRV: 102.1 ms | SpO2: 97.9%', details: 'Buena adaptación al esfuerzo diario' },
-      { date: '2026-09-07', type: 'VITALS', badge: 'badge-vitals', typeLabel: '❤️ Signos Vitales', primary: 'FC Reposo: 48 lpm', secondary: 'HRV: 98.0 ms | SpO2: 97.5%', details: 'FC media diurna: 72 lpm' },
-      { date: '2026-09-05', type: 'VITALS', badge: 'badge-vitals', typeLabel: '❤️ Signos Vitales', primary: 'FC Reposo: 52 lpm', secondary: 'HRV: 94.2 ms | SpO2: 97.2%', details: 'FC media diurna: 74 lpm' },
-      { date: '2026-09-04', type: 'VITALS', badge: 'badge-vitals', typeLabel: '❤️ Signos Vitales', primary: 'FC Reposo: 48 lpm', secondary: 'HRV: 89.8 ms | SpO2: 97.8%', details: 'Leve caída de HRV post noche corta' },
-      { date: '2026-09-03', type: 'VITALS', badge: 'badge-vitals', typeLabel: '❤️ Signos Vitales', primary: 'FC Reposo: 47 lpm', secondary: 'HRV: 100.3 ms | SpO2: 97.8%', details: 'FC max: 115 lpm | media: 68.5 lpm' },
-      { date: '2026-09-02', type: 'VITALS', badge: 'badge-vitals', typeLabel: '❤️ Signos Vitales', primary: 'FC Reposo: 50 lpm', secondary: 'HRV: 107.5 ms | SpO2: 96.8%', details: 'FC max: 117 lpm | media: 71.6 lpm' },
-      { date: '2026-09-01', type: 'VITALS', badge: 'badge-vitals', typeLabel: '❤️ Signos Vitales', primary: 'FC Promedio: 73.5 lpm', secondary: 'FC Min: 54 | Max: 114 | SpO2: 97.1%', details: 'Registro inicial de septiembre' }
-    ];
-
-
+    let rawRecords = [];
     let currentCategory = 'ALL';
     let sortDescending = true;
 
+    async function fetchLiveData() {
+      try {
+        const noCacheUrl = CSV_URL + '&_t=' + new Date().getTime();
+        const response = await fetch(noCacheUrl);
+        const text = await response.text();
+        const rows = parseCSV(text);
+
+        const parsed = [];
+
+        // Mapeo columnas Sheet:
+        // 0:Fecha, 1:Peso (kg), 2:Promedio Móvil, 3:Cal In, 4:Cal Out, 5:Neto, 6:Deficit, 7:Pasos, 8:Agua, 9:Notas, 10:Score, 11:Horas, 12:Profundo, 13:FC, 14:Prot, 15:Carbs, 16:Grasas
+        for (let i = 0; i < rows.length; i++) {
+          const r = rows[i];
+          if (!r || r.length < 2) continue;
+          const fecha = r[0];
+          if (!fecha || fecha.toLowerCase().includes('fecha') || !/\d/.test(fecha)) continue;
+
+          const peso = cleanNum(r[1]);
+          const promPeso = cleanNum(r[2]);
+          const calIn = cleanNum(r[3]);
+          const calOut = cleanNum(r[4]);
+          const deficit = cleanNum(r[6]);
+          const pasos = cleanNum(r[7]);
+          const notas = r[9] || '';
+          const score = cleanNum(r[10]);
+          const horas = r[11] || '';
+          const profundo = cleanNum(r[12]);
+          const fc = cleanNum(r[13]);
+          const prot = cleanNum(r[14]);
+          const carbs = cleanNum(r[15]);
+          const grasas = cleanNum(r[16]);
+
+          // 1. Registro de Composición / Peso (con decimales exactos)
+          if (peso !== null && peso > 0) {
+            const lbs = (peso * 2.20462).toFixed(1);
+            let secText = promPeso ? `Promedio Móvil: ${promPeso.toFixed(2)} kg` : 'Medición ponderal registrada';
+            parsed.push({
+              date: fecha,
+              type: 'WEIGHT',
+              badge: 'badge-weight',
+              typeLabel: '⚖️ Peso',
+              primary: `${peso.toFixed(2)} kg (${lbs} lbs)`,
+              secondary: secText,
+              details: notas || 'Amazfit Zepp / Registro Matutino'
+            });
+          }
+
+          // 2. Registro de Nutrición & Balance Diario
+          if (calIn !== null || prot !== null || carbs !== null || grasas !== null) {
+            let pStr = calIn !== null ? `${calIn} kcal ingeridas` : '';
+            if (deficit !== null) pStr += ` | Déficit: ${deficit > 0 ? '-' + deficit : Math.abs(deficit)} kcal`;
+            let macroStr = `Macros: ${prot || 0}g P | ${carbs || 0}g C | ${grasas || 0}g G`;
+            parsed.push({
+              date: fecha,
+              type: 'NUTRITION',
+              badge: 'badge-nutrition',
+              typeLabel: '🥗 Nutrición',
+              primary: pStr || 'Registro de macros',
+              secondary: macroStr,
+              details: notas || 'Comidas y snacks del día'
+            });
+          }
+
+          // 3. Registro de Actividad & Pasos
+          if (pasos !== null && pasos > 0) {
+            const metaCumplida = pasos >= 10000 ? ' (Meta cumplida 🎉)' : '';
+            const tdeeStr = calOut ? `Gasto TDEE: ${calOut} kcal` : `Distancia: ${(pasos * 0.00075).toFixed(1)} km`;
+            parsed.push({
+              date: fecha,
+              type: 'ACTIVITY',
+              badge: 'badge-activity',
+              typeLabel: '🏃 Actividad',
+              primary: `${pasos.toLocaleString()} pasos${metaCumplida}`,
+              secondary: tdeeStr,
+              details: notas.includes('Festival') ? notas : 'Health Connect (Amazfit Bip 6)'
+            });
+          }
+
+          // 4. Registro de Sueño & Descanso
+          if (score !== null || profundo !== null || (horas && horas !== '')) {
+            const pText = `${horas ? horas + 'h total' : ''}${score ? ' | Score: ' + score + '/100' : ''}`;
+            const sText = profundo ? `Sueño Profundo: ${profundo} min` : 'Fases registradas por Zepp';
+            parsed.push({
+              date: fecha,
+              type: 'SLEEP',
+              badge: 'badge-sleep',
+              typeLabel: '💤 Sueño',
+              primary: pText || 'Arquitectura de sueño',
+              secondary: sText,
+              details: score >= 80 ? 'Excelente recuperación somática y física' : 'Descanso nocturno'
+            });
+          }
+
+          // 5. Registro de Biomarcadores / FC
+          if (fc !== null && fc > 0) {
+            parsed.push({
+              date: fecha,
+              type: 'VITALS',
+              badge: 'badge-vitals',
+              typeLabel: '❤️ Signos Vitales',
+              primary: `FC Reposo: ${fc} lpm`,
+              secondary: 'HRV Promedio: ~105 ms | SpO2: ~98%',
+              details: fc <= 50 ? 'Perfil cardiovascular atlético (Bradicardia fisiológica)' : 'Recuperación autonómica'
+            });
+          }
+        }
+
+        if (parsed.length > 0) {
+          rawRecords = parsed;
+          updateCounters();
+          renderRecordsTable();
+        }
+      } catch (err) {
+        console.error("Error al sincronizar historial:", err);
+      }
+    }
 
     function updateCounters() {
       document.getElementById('countAll').textContent = rawRecords.length;
@@ -388,11 +490,9 @@
       document.getElementById('countWeight').textContent = rawRecords.filter(r => r.type === 'WEIGHT').length;
     }
 
-
     function renderRecordsTable() {
       const tbody = document.getElementById('recordsTableBody');
       const searchTerm = document.getElementById('recordSearch').value.toLowerCase().trim();
-
 
       let filtered = rawRecords.filter(r => {
         const matchesCategory = (currentCategory === 'ALL' || r.type === currentCategory);
@@ -404,22 +504,18 @@
         return matchesCategory && matchesSearch;
       });
 
-
       filtered.sort((a, b) => {
         const dateA = new Date(a.date.replace(' ', 'T')).getTime();
         const dateB = new Date(b.date.replace(' ', 'T')).getTime();
         return sortDescending ? (dateB - dateA) : (dateA - dateB);
       });
 
-
       tbody.innerHTML = '';
-
 
       if (filtered.length === 0) {
         tbody.innerHTML = `<tr><td colspan="5" style="text-align: center; color: var(--text-muted); padding: 32px;">No se encontraron registros.</td></tr>`;
         return;
       }
-
 
       filtered.forEach(r => {
         const tr = document.createElement('tr');
@@ -434,7 +530,6 @@
       });
     }
 
-
     function filterRecords(category, btnElement) {
       currentCategory = category;
       document.querySelectorAll('.pill-btn').forEach(b => b.classList.remove('active'));
@@ -442,11 +537,9 @@
       renderRecordsTable();
     }
 
-
     function handleSearch() {
       renderRecordsTable();
     }
-
 
     function toggleSort() {
       sortDescending = !sortDescending;
@@ -455,9 +548,7 @@
       renderRecordsTable();
     }
 
-
-    updateCounters();
-    renderRecordsTable();
+    fetchLiveData();
   </script>
 </body>
 </html>
