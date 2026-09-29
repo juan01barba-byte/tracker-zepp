@@ -355,8 +355,8 @@
     <!-- Sync status banner -->
     <div class="sync-banner">
       <div>
-        <div style="font-weight: 700; color: var(--accent-purple); font-size: 0.95rem;">⚡ Pipeline de Métricas Activo (Registro Diario + Sleep Sheet)</div>
-        <div style="font-size: 0.82rem; color: var(--text-muted); margin-top: 2px;">Integración directa con el historial completo de sueño del último mes (Profundo, REM y Ligero) desde tu pestaña Zepp</div>
+        <div style="font-weight: 700; color: var(--accent-purple); font-size: 0.95rem;">⚡ Pipeline de Métricas Activo (Registro Diario + Sleep + Activity)</div>
+        <div style="font-size: 0.82rem; color: var(--text-muted); margin-top: 2px;">Integración de datos en tiempo real: Peso, Nutrición, Pasos Zepp y Fases de Sueño</div>
       </div>
       <a href="https://docs.google.com/spreadsheets/d/1S2Ov9hMtIm6UrI8uuvuDXNJNiUhbHV6lZ-fM-gu69UE/edit" target="_blank" style="color: var(--accent-blue); text-decoration: none; font-size: 0.85rem; font-weight: 600; background: rgba(56, 189, 248, 0.1); padding: 8px 14px; border-radius: 8px; border: 1px solid rgba(56, 189, 248, 0.2);">Abrir Google Sheet ↗</a>
     </div>
@@ -481,8 +481,8 @@
       <div class="card">
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
           <div>
-            <h2 style="font-size: 1.05rem; font-weight: 700;">Pasos Diarios y Actividad Física (Zepp)</h2>
-            <p style="font-size: 0.78rem; color: var(--text-muted);">Pasos registrados con meta dinámica en 10,000 pasos</p>
+            <h2 style="font-size: 1.05rem; font-weight: 700;">Pasos Diarios y Actividad Física (Zepp Activity)</h2>
+            <p style="font-size: 0.78rem; color: var(--text-muted);">Pasos registrados en tiempo real comparados contra la meta de 10,000 pasos</p>
           </div>
         </div>
         <div class="chart-container">
@@ -634,6 +634,7 @@
     // ==========================================
     const CSV_URL = "https://docs.google.com/spreadsheets/d/1S2Ov9hMtIm6UrI8uuvuDXNJNiUhbHV6lZ-fM-gu69UE/export?format=csv";
     const SLEEP_CSV_URL = "https://docs.google.com/spreadsheets/d/1S2Ov9hMtIm6UrI8uuvuDXNJNiUhbHV6lZ-fM-gu69UE/gviz/tq?tqx=out:csv&sheet=Sleep";
+    const ACTIVITY_CSV_URL = "https://docs.google.com/spreadsheets/d/1S2Ov9hMtIm6UrI8uuvuDXNJNiUhbHV6lZ-fM-gu69UE/gviz/tq?tqx=out:csv&sheet=Activity";
 
     function cleanNum(val) {
       if (val === undefined || val === null || val === '') return null;
@@ -673,10 +674,11 @@
       try {
         const timestamp = '&_t=' + new Date().getTime();
         
-        // Carga simultánea: pestaña 'Registro Diario' y pestaña 'Sleep'
-        const [resDaily, resSleep] = await Promise.allSettled([
+        // Carga simultánea: pestaña 'Registro Diario', 'Sleep' y 'Activity'
+        const [resDaily, resSleep, resActivity] = await Promise.allSettled([
           fetch(CSV_URL + timestamp).then(r => r.text()),
-          fetch(SLEEP_CSV_URL + timestamp).then(r => r.text())
+          fetch(SLEEP_CSV_URL + timestamp).then(r => r.text()),
+          fetch(ACTIVITY_CSV_URL + timestamp).then(r => r.text())
         ]);
 
         let dataRows = [];
@@ -705,7 +707,6 @@
             const startTime = sr[3]; // Start Time
             if (!dateStr || !/\d/.test(dateStr)) continue;
 
-            // Desduplicar sesiones de sueño si la app exportó doble
             const sessionKey = dateStr + '_' + (startTime || '');
             if (seenSessions.has(sessionKey)) continue;
             seenSessions.add(sessionKey);
@@ -725,15 +726,38 @@
           }
         }
 
-        if (dataRows.length > 0) {
-          updateDashboard(dataRows, sleepMap);
+        // Parsear pestaña 'Activity' con los pasos reales de Amazfit / Zepp
+        const activityMap = {};
+        if (resActivity.status === 'fulfilled') {
+          const actRows = parseCSV(resActivity.value);
+          for (let i = 1; i < actRows.length; i++) {
+            const ar = actRows[i];
+            if (!ar || ar.length < 4) continue;
+            const dateStr = ar[0];
+            const source = (ar[1] || '').toLowerCase();
+            const steps = cleanNum(ar[3]);
+            if (!dateStr || !/\d/.test(dateStr) || steps === null || steps <= 0) continue;
+
+            // Priorizar fuente Amazfit / Huami, o tomar el registro con más pasos
+            if (!activityMap[dateStr] || source.includes('huami') || steps > activityMap[dateStr].steps) {
+              activityMap[dateStr] = {
+                steps: steps,
+                distance: cleanNum(ar[4]) || 0,
+                calories: cleanNum(ar[7]) || 0
+              };
+            }
+          }
+        }
+
+        if (dataRows.length > 0 || Object.keys(activityMap).length > 0) {
+          updateDashboard(dataRows, sleepMap, activityMap);
         }
       } catch (err) {
         console.error("Error al sincronizar con Google Sheets:", err);
       }
     }
 
-    function updateDashboard(dataRows, sleepMap) {
+    function updateDashboard(dataRows, sleepMap, activityMap) {
       const latest = dataRows[dataRows.length - 1];
 
       // 1. Buscar peso más reciente
@@ -743,11 +767,17 @@
         if (w !== null && w > 0) { currentWeight = w; break; }
       }
 
-      // 2. Buscar pasos más recientes
+      // 2. Buscar pasos más recientes (priorizando pestaña 'Activity')
       let currentSteps = 0;
-      for (let i = dataRows.length - 1; i >= 0; i--) {
-        const st = cleanNum(dataRows[i][7]);
-        if (st !== null && st > 0) { currentSteps = st; break; }
+      const actDates = Object.keys(activityMap).sort();
+      if (actDates.length > 0) {
+        const lastActDate = actDates[actDates.length - 1];
+        currentSteps = activityMap[lastActDate].steps;
+      } else {
+        for (let i = dataRows.length - 1; i >= 0; i--) {
+          const st = cleanNum(dataRows[i][7]);
+          if (st !== null && st > 0) { currentSteps = st; break; }
+        }
       }
 
       // 3. Buscar datos de sueño de la última noche (desde Sleep Sheet o Registro Diario)
@@ -784,21 +814,23 @@
 
       // 5. Buscar macros más recientes
       let currentProt = 51, currentCarbs = 116, currentFat = 28;
-      let macroDate = latest[0];
-      for (let i = dataRows.length - 1; i >= 0; i--) {
-        const p = cleanNum(dataRows[i][14]);
-        if (p !== null && p > 0) {
-          currentProt = p;
-          currentCarbs = cleanNum(dataRows[i][15]) || 116;
-          currentFat = cleanNum(dataRows[i][16]) || 28;
-          macroDate = dataRows[i][0];
-          break;
+      let macroDate = latest ? latest[0] : '2026-09-28';
+      if (dataRows && dataRows.length > 0) {
+        for (let i = dataRows.length - 1; i >= 0; i--) {
+          const p = cleanNum(dataRows[i][14]);
+          if (p !== null && p > 0) {
+            currentProt = p;
+            currentCarbs = cleanNum(dataRows[i][15]) || 116;
+            currentFat = cleanNum(dataRows[i][16]) || 28;
+            macroDate = dataRows[i][0];
+            break;
+          }
         }
       }
 
-      const calIn = cleanNum(latest[3]);
-      const calOut = cleanNum(latest[4]);
-      let netDeficitText = latest[5] || (calOut > 0 ? (calIn - calOut) + ' kcal' : '-640 kcal');
+      const calIn = latest ? cleanNum(latest[3]) : null;
+      const calOut = latest ? cleanNum(latest[4]) : null;
+      let netDeficitText = (latest && latest[5]) || (calOut > 0 ? (calIn - calOut) + ' kcal' : '-640 kcal');
       if (typeof netDeficitText === 'number') netDeficitText = netDeficitText + ' kcal';
 
       // -------------------------------------------------------------
@@ -835,7 +867,7 @@
       document.getElementById('boxRHR').innerHTML = `${currentRHR} <span style="font-size: 0.7rem;">lpm</span>`;
 
       // -------------------------------------------------------------
-      // 1. GRÁFICA 1: Peso vs Déficit (Días recientes de Registro Diario)
+      // 1. GRÁFICA 1: Peso vs Déficit
       // -------------------------------------------------------------
       const recentRows = dataRows.slice(-10);
       const labels = recentRows.map(r => r[0].length >= 10 ? r[0].slice(5) : r[0]);
@@ -966,26 +998,36 @@
       });
 
       // -------------------------------------------------------------
-      // 3. GRÁFICA 3: Pasos Diarios vs Meta (10,000)
+      // 3. GRÁFICA 3: Pasos Diarios vs Meta (10,000) - ALIMENTADA DESDE 'Activity'
       // -------------------------------------------------------------
-      const stepsData = recentRows.map(r => cleanNum(r[7]) || 5500);
+      let actLabels = [];
+      let stepsData = [];
+
+      if (actDates.length > 0) {
+        const targetActDates = actDates.slice(-12);
+        actLabels = targetActDates.map(d => d.slice(5)); // MM-DD
+        stepsData = targetActDates.map(d => activityMap[d].steps);
+      } else {
+        actLabels = labels;
+        stepsData = recentRows.map(r => cleanNum(r[7]) || 5500);
+      }
 
       const ctxActivity = document.getElementById('activityChart').getContext('2d');
       if (activityChart) activityChart.destroy();
       activityChart = new Chart(ctxActivity, {
         type: 'bar',
         data: {
-          labels: labels,
+          labels: actLabels,
           datasets: [
             {
-              label: 'Pasos Diarios',
+              label: 'Pasos Diarios (Zepp)',
               data: stepsData,
               backgroundColor: (context) => (context.raw >= 10000 ? '#10b981' : '#0284c7'),
               borderRadius: 6
             },
             {
               label: 'Meta (10,000 pasos)',
-              data: labels.map(() => 10000),
+              data: actLabels.map(() => 10000),
               type: 'line',
               borderColor: '#f97316',
               borderWidth: 2,
@@ -1055,7 +1097,7 @@
               position: 'left',
               min: 40,
               max: 65,
-              grid: { color: 'rgba(255, 255, 255, 0.05)' },
+              grid: { color: 'rgba(255, 255, 255, 0.05)' }, 
               ticks: { color: '#f97316' },
               title: { display: true, text: 'FC Reposo (lpm)', color: '#f97316' }
             },
@@ -1064,7 +1106,7 @@
               position: 'right',
               min: 70,
               max: 130,
-              grid: { drawOnChartArea: false },
+              grid: { drawOnChartArea: false }, 
               ticks: { color: '#ec4899' },
               title: { display: true, text: 'HRV (ms)', color: '#ec4899' }
             }
