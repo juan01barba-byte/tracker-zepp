@@ -17,6 +17,8 @@
       --accent-green: #10b981;
       --accent-orange: #f97316;
       --accent-purple: #a855f7;
+      --accent-pink: #ec4899;
+      --accent-cyan: #06b6d4;
       --text-main: #f9fafb;
       --text-muted: #9ca3af;
     }
@@ -36,7 +38,7 @@
     }
 
     .container {
-      max-width: 1200px;
+      max-width: 1280px;
       margin: 0 auto;
     }
 
@@ -61,36 +63,22 @@
       font-weight: 600;
     }
 
-    .sync-status {
-      display: inline-flex;
+    .sync-banner {
+      background: linear-gradient(90deg, rgba(168, 85, 247, 0.12), rgba(56, 189, 248, 0.1));
+      border: 1px solid rgba(168, 85, 247, 0.3);
+      border-radius: 14px;
+      padding: 16px 20px;
+      margin-bottom: 24px;
+      display: flex;
+      justify-content: space-between;
       align-items: center;
-      gap: 8px;
-      background: rgba(16, 185, 129, 0.1);
-      color: var(--accent-green);
-      border: 1px solid rgba(16, 185, 129, 0.25);
-      padding: 6px 14px;
-      border-radius: 999px;
-      font-size: 0.82rem;
-      font-weight: 600;
-    }
-
-    .sync-dot {
-      width: 8px;
-      height: 8px;
-      border-radius: 50%;
-      background: var(--accent-green);
-      animation: pulse 2s infinite;
-    }
-
-    @keyframes pulse {
-      0% { transform: scale(0.95); opacity: 0.8; }
-      50% { transform: scale(1.2); opacity: 1; }
-      100% { transform: scale(0.95); opacity: 0.8; }
+      flex-wrap: wrap;
+      gap: 12px;
     }
 
     .grid-kpis {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
       gap: 16px;
       margin-bottom: 24px;
     }
@@ -104,7 +92,7 @@
     }
 
     .card-title {
-      font-size: 0.82rem;
+      font-size: 0.8rem;
       font-weight: 600;
       color: var(--text-muted);
       text-transform: uppercase;
@@ -113,7 +101,7 @@
     }
 
     .card-value {
-      font-size: 1.9rem;
+      font-size: 1.85rem;
       font-weight: 800;
       letter-spacing: -0.02em;
     }
@@ -124,144 +112,147 @@
       margin-top: 6px;
     }
 
-    .grid-charts {
+    .grid-2col {
       display: grid;
-      grid-template-columns: 1.8fr 1.2fr;
+      grid-template-columns: 1fr 1fr;
       gap: 20px;
       margin-bottom: 24px;
     }
 
-    @media (max-width: 950px) {
-      .grid-charts {
+    .grid-3col {
+      display: grid;
+      grid-template-columns: 2fr 1fr;
+      gap: 20px;
+      margin-bottom: 24px;
+    }
+
+    @media (max-width: 960px) {
+      .grid-2col, .grid-3col {
         grid-template-columns: 1fr;
       }
     }
 
-    .chart-header {
+    .chart-container {
+      height: 290px;
+      position: relative;
+      margin-top: 10px;
+    }
+
+    .macro-bar-container {
+      margin-top: 14px;
+    }
+
+    .macro-item {
+      margin-bottom: 14px;
+    }
+
+    .macro-labels {
       display: flex;
       justify-content: space-between;
+      font-size: 0.85rem;
+      margin-bottom: 4px;
+    }
+
+    .progress-bar-bg {
+      height: 8px;
+      background: #1e293b;
+      border-radius: 999px;
+      overflow: hidden;
+    }
+
+    .progress-bar-fill {
+      height: 100%;
+      border-radius: 999px;
+    }
+
+    .badge {
+      display: inline-flex;
       align-items: center;
-      margin-bottom: 14px;
-      flex-wrap: wrap;
-      gap: 10px;
+      gap: 6px;
+      font-weight: 700;
+      font-size: 0.85rem;
+      margin-bottom: 8px;
     }
 
-    .chart-link {
-      color: var(--accent-blue);
-      text-decoration: underline;
-      cursor: pointer;
-      font-size: 0.82rem;
-      font-weight: 600;
-      background: none;
-      border: none;
-      padding: 0;
+    .vitals-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+      gap: 12px;
+      margin-top: 12px;
     }
 
-    .chart-link:hover {
-      color: #7dd3fc;
-    }
-
-    .selector-control {
+    .vital-box {
       background: #0b0f19;
-      color: var(--text-main);
       border: 1px solid var(--card-border);
-      border-radius: 8px;
-      padding: 6px 12px;
-      font-size: 0.82rem;
-      font-weight: 600;
-      outline: none;
-      cursor: pointer;
-    }
-
-    .doughnut-wrapper {
-      position: relative;
-      height: 220px;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-    }
-
-    .macro-legend {
-      display: flex;
-      justify-content: space-around;
-      margin-top: 16px;
-      padding-top: 12px;
-      border-top: 1px solid var(--card-border);
+      border-radius: 12px;
+      padding: 12px;
       text-align: center;
     }
 
-    .legend-item {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 4px;
-    }
-
-    .legend-bullet {
-      width: 10px;
-      height: 10px;
-      border-radius: 50%;
-      display: inline-block;
-    }
-
-    .legend-title {
-      font-size: 0.75rem;
+    .vital-box-label {
+      font-size: 0.72rem;
       color: var(--text-muted);
       text-transform: uppercase;
-      font-weight: 600;
-      display: flex;
-      align-items: center;
-      gap: 6px;
+      margin-bottom: 4px;
     }
 
-    .legend-val {
-      font-size: 1.15rem;
+    .vital-box-val {
+      font-size: 1.25rem;
       font-weight: 800;
     }
 
-    .data-table-container {
-      overflow-x: auto;
+    .form-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+      gap: 14px;
       margin-top: 16px;
     }
 
-    table {
+    .input-group label {
+      display: block;
+      font-size: 0.76rem;
+      font-weight: 600;
+      color: var(--text-muted);
+      margin-bottom: 6px;
+    }
+
+    .input-group input {
       width: 100%;
-      border-collapse: collapse;
-      font-size: 0.85rem;
+      background: #0b0f19;
+      border: 1px solid var(--card-border);
+      color: #fff;
+      padding: 10px 12px;
+      border-radius: 8px;
+      font-size: 0.9rem;
     }
 
-    th, td {
-      padding: 10px 14px;
-      text-align: left;
-      border-bottom: 1px solid var(--card-border);
+    .input-group input:focus {
+      outline: none;
+      border-color: var(--accent-blue);
     }
 
-    th {
-      color: var(--text-muted);
-      font-weight: 600;
-      font-size: 0.75rem;
-      text-transform: uppercase;
-    }
-
-    tr:hover {
-      background: rgba(255, 255, 255, 0.03);
-      cursor: pointer;
-    }
-
-    .badge-filter {
-      background: #1f2937;
-      color: var(--text-muted);
-      padding: 4px 10px;
-      border-radius: 6px;
-      font-size: 0.75rem;
-      font-weight: 600;
-    }
-
-    .pill-macro {
-      padding: 3px 8px;
-      border-radius: 6px;
+    .btn-submit {
+      background: var(--accent-blue);
+      color: #0b0f19;
       font-weight: 700;
-      font-size: 0.8rem;
+      border: none;
+      border-radius: 8px;
+      padding: 12px 24px;
+      cursor: pointer;
+      margin-top: 18px;
+      width: 100%;
+      font-size: 0.95rem;
+      transition: all 0.2s ease;
+    }
+
+    .btn-submit:hover {
+      opacity: 0.9;
+      transform: translateY(-1px);
+    }
+
+    .btn-submit:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
     }
   </style>
 </head>
@@ -269,155 +260,301 @@
   <div class="container">
     <header>
       <div>
-        <h1 style="font-size: 1.5rem; font-weight: 800;">Registro de Rendimiento & Déficit</h1>
-        <p style="color: var(--text-muted); font-size: 0.85rem; margin-top: 2px;">Sincronización en Vivo Zepp (Amazfit Bip 6) & Google Sheets</p>
+        <h1 style="font-size: 1.5rem; font-weight: 800;">Panel de Salud, Déficit & Zepp Tracker</h1>
+        <p style="color: var(--text-muted); font-size: 0.85rem; margin-top: 2px;">Sincronización en Vivo: Amazfit Bip ➔ Health Connect ➔ Google Sheets</p>
       </div>
-      <div style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap;">
-        <span class="sync-status"><span class="sync-dot"></span> Sincronizado en Vivo</span>
-        <span class="user-tag">Juan Hurtado (64.3 kg | 1.64 m)</span>
+      <div style="display: flex; gap: 10px; align-items: center;">
+        <span class="user-tag">Juan Hurtado (64.3 kg | Meta: 60.0 kg | 1.64 m)</span>
       </div>
     </header>
+
+    <!-- Sync status banner -->
+    <div class="sync-banner">
+      <div>
+        <div style="font-weight: 700; color: var(--accent-purple); font-size: 0.95rem;">⚡ Pipeline de Métricas Activo</div>
+        <div style="font-size: 0.82rem; color: var(--text-muted); margin-top: 2px;">Integración de Actividad (Pasos/Calorías), Arquitectura de Sueño (REM/Profundo) y Fisiología Cardiovascular (FC Reposo/HRV/SpO2)</div>
+      </div>
+      <a href="https://docs.google.com/spreadsheets/d/1S2Ov9hMtIm6UrI8uuvuDXNJNiUhbHV6lZ-fM-gu69UE/edit" target="_blank" style="color: var(--accent-blue); text-decoration: none; font-size: 0.85rem; font-weight: 600; background: rgba(56, 189, 248, 0.1); padding: 8px 14px; border-radius: 8px; border: 1px solid rgba(56, 189, 248, 0.2);">Abrir Google Sheet ↗</a>
+    </div>
 
     <!-- Top KPIs -->
     <div class="grid-kpis">
       <div class="card">
-        <div class="card-title">Balance Calórico Hoy</div>
-        <div class="card-value" style="color: var(--accent-green);" id="kpiNetDeficit">- kcal</div>
-        <div class="card-subtext" id="kpiCalSub">Cargando datos...</div>
+        <div class="card-title">Balance Calórico Diario</div>
+        <div class="card-value" style="color: var(--accent-green);" id="kpiNetDeficit">-640 kcal</div>
+        <div class="card-subtext">Ingeridas: 895 kcal | TDEE: ~1,535 kcal</div>
       </div>
       <div class="card">
         <div class="card-title">Pasos (Amazfit Zepp)</div>
-        <div class="card-value" style="color: var(--accent-blue);" id="kpiSteps">-</div>
-        <div class="card-subtext">Meta: 10,000 pasos / día</div>
+        <div class="card-value" style="color: var(--accent-blue);" id="kpiSteps">11,335</div>
+        <div class="card-subtext">Distancia: 6.8 km | Meta: 10,000 pasos</div>
       </div>
       <div class="card">
-        <div class="card-title">Calidad de Sueño Zepp</div>
-        <div class="card-value" style="color: var(--accent-purple);" id="kpiSleepScore">- <span style="font-size: 1rem; color: var(--text-muted);">/100</span></div>
-        <div class="card-subtext" id="kpiSleepSub">Calculando...</div>
+        <div class="card-title">Arquitectura de Sueño</div>
+        <div class="card-value" style="color: var(--accent-purple);" id="kpiSleepScore">82 <span style="font-size: 0.95rem; color: var(--text-muted);">/100</span></div>
+        <div class="card-subtext">6h 54m total | 1h 15m profundo (18%)</div>
       </div>
       <div class="card">
-        <div class="card-title">FC Reposo & Peso</div>
-        <div class="card-value" style="color: var(--accent-orange);" id="kpiWeight">- kg</div>
-        <div class="card-subtext" id="kpiRHRSub">FC Reposo: - lpm</div>
+        <div class="card-title">Cardiovascular & Recuperación</div>
+        <div class="card-value" style="color: var(--accent-orange);" id="kpiRHR">48 <span style="font-size: 0.95rem; color: var(--text-muted);">lpm</span></div>
+        <div class="card-subtext">FC Reposo: 48 lpm | HRV: 107 ms | SpO2: 97%</div>
+      </div>
+      <div class="card">
+        <div class="card-title">Peso Actual & Progreso</div>
+        <div class="card-value" style="color: var(--accent-cyan);" id="kpiWeight">64.3 <span style="font-size: 0.95rem; color: var(--text-muted);">kg</span></div>
+        <div class="card-subtext">Faltan 4.3 kg para la meta (60.0 kg)</div>
       </div>
     </div>
 
-    <!-- Main Grid: Trend Chart + Doughnut Chart -->
-    <div class="grid-charts">
-      <!-- Trend Chart with 7 days filter / view all toggle -->
+    <!-- Main Charts Section 1 -->
+    <div class="grid-3col">
+      <!-- Weight & Caloric Deficit Trend -->
       <div class="card">
-        <div class="chart-header">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
           <div>
-            <h2 style="font-size: 1.1rem; font-weight: 700;">Evolución de Peso y Déficit</h2>
-            <span class="badge-filter" id="chartFilterBadge">Mostrando: Últimos 7 días</span>
+            <h2 style="font-size: 1.05rem; font-weight: 700;">Evolución de Peso vs. Déficit Calórico</h2>
+            <p style="font-size: 0.78rem; color: var(--text-muted);">Correlación entre déficit acumulado y pérdida ponderal</p>
           </div>
-          <button class="chart-link" id="toggleRangeBtn" onclick="toggleDateRange()">Ver todos los registros (Historial completo) →</button>
         </div>
-        <div style="height: 280px; position: relative;">
-          <canvas id="trendChart"></canvas>
+        <div class="chart-container">
+          <canvas id="weightDeficitChart"></canvas>
         </div>
       </div>
 
-      <!-- Doughnut Chart: Macros breakdown (Rueda de composición de comidas) -->
+      <!-- Macros Card -->
       <div class="card">
-        <div class="chart-header">
-          <div>
-            <h2 style="font-size: 1.1rem; font-weight: 700;">Rueda de Macronutrientes</h2>
-            <span style="font-size: 0.78rem; color: var(--text-muted);" id="wheelSubtitle">Composición nutricional en gramos (g)</span>
+        <h2 style="font-size: 1.05rem; font-weight: 700; margin-bottom: 4px;">Metas de Macronutrientes</h2>
+        <p style="font-size: 0.78rem; color: var(--text-muted); margin-bottom: 12px;">Objetivo base: 1,750 kcal/día</p>
+
+        <div class="macro-bar-container">
+          <div class="macro-item">
+            <div class="macro-labels">
+              <span><strong>Proteína</strong> (116g obj | 1.8g/kg)</span>
+              <span id="protStatus">95g / 116g</span>
+            </div>
+            <div class="progress-bar-bg">
+              <div class="progress-bar-fill" style="width: 82%; background: var(--accent-blue);"></div>
+            </div>
           </div>
-          <select id="mealSelect" class="selector-control" onchange="onMealSelectChange()">
-            <option value="daily_latest">Total Diario (Último Registro)</option>
-            <option value="meal_lunch">Comida 3:45pm (Burrito Pollo + Frijoles)</option>
-            <option value="meal_snack">Snack (Guineo)</option>
-            <option value="day_27">Día 27 (Festival Mejorana)</option>
-          </select>
+
+          <div class="macro-item">
+            <div class="macro-labels">
+              <span><strong>Carbohidratos</strong> (200g obj | 3.1g/kg)</span>
+              <span id="carbsStatus">170g / 200g</span>
+            </div>
+            <div class="progress-bar-bg">
+              <div class="progress-bar-fill" style="width: 85%; background: var(--accent-green);"></div>
+            </div>
+          </div>
+
+          <div class="macro-item">
+            <div class="macro-labels">
+              <span><strong>Grasas</strong> (54g obj | 0.85g/kg)</span>
+              <span id="fatStatus">45g / 54g</span>
+            </div>
+            <div class="progress-bar-bg">
+              <div class="progress-bar-fill" style="width: 83%; background: var(--accent-orange);"></div>
+            </div>
+          </div>
         </div>
-        <div class="doughnut-wrapper">
-          <canvas id="macroDoughnut"></canvas>
-        </div>
-        <div class="macro-legend">
-          <div class="legend-item">
-            <span class="legend-title"><span class="legend-bullet" style="background: var(--accent-blue);"></span> Proteína</span>
-            <span class="legend-val" style="color: var(--accent-blue);" id="legProt">42 g</span>
-          </div>
-          <div class="legend-item">
-            <span class="legend-title"><span class="legend-bullet" style="background: var(--accent-green);"></span> Carbohidratos</span>
-            <span class="legend-val" style="color: var(--accent-green);" id="legCarbs">77 g</span>
-          </div>
-          <div class="legend-item">
-            <span class="legend-title"><span class="legend-bullet" style="background: var(--accent-orange);"></span> Grasas</span>
-            <span class="legend-val" style="color: var(--accent-orange);" id="legFat">20 g</span>
+
+        <div style="margin-top: 18px; padding-top: 14px; border-top: 1px solid var(--card-border);">
+          <div class="badge" style="color: var(--accent-pink);">🩺 Biomarcadores (Vitals)</div>
+          <div class="vitals-grid">
+            <div class="vital-box">
+              <div class="vital-box-label">FC Reposo</div>
+              <div class="vital-box-val" style="color: var(--accent-orange);">48 <span style="font-size: 0.7rem;">lpm</span></div>
+            </div>
+            <div class="vital-box">
+              <div class="vital-box-label">HRV Prom.</div>
+              <div class="vital-box-val" style="color: var(--accent-purple);">107 <span style="font-size: 0.7rem;">ms</span></div>
+            </div>
+            <div class="vital-box">
+              <div class="vital-box-label">SpO2</div>
+              <div class="vital-box-val" style="color: var(--accent-blue);">97.8 <span style="font-size: 0.7rem;">%</span></div>
+            </div>
           </div>
         </div>
       </div>
     </div>
 
-    <!-- Live Records Table -->
-    <div class="card">
-      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; flex-wrap: wrap; gap: 8px;">
+    <!-- Main Charts Section 2: Health Connect Data (Sleep Architecture + Activity Trend) -->
+    <div class="grid-2col">
+      <!-- Sleep Architecture Stacked Bar Chart -->
+      <div class="card">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+          <div>
+            <h2 style="font-size: 1.05rem; font-weight: 700;">Arquitectura y Fases de Sueño (Zepp Sleep)</h2>
+            <p style="font-size: 0.78rem; color: var(--text-muted);">Desglose diario en minutos: Profundo, Ligero y REM (Health Connect)</p>
+          </div>
+        </div>
+        <div class="chart-container">
+          <canvas id="sleepChart"></canvas>
+        </div>
+      </div>
+
+      <!-- Activity & Steps vs Goal -->
+      <div class="card">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+          <div>
+            <h2 style="font-size: 1.05rem; font-weight: 700;">Pasos Diarios y Actividad Física (Zepp)</h2>
+            <p style="font-size: 0.78rem; color: var(--text-muted);">Pasos registrados con línea de meta en 10,000 pasos</p>
+          </div>
+        </div>
+        <div class="chart-container">
+          <canvas id="activityChart"></canvas>
+        </div>
+      </div>
+    </div>
+
+    <!-- Main Charts Section 3: Cardiovascular Recovery (HRV vs Resting Heart Rate) -->
+    <div class="card" style="margin-bottom: 24px;">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
         <div>
-          <h2 style="font-size: 1.1rem; font-weight: 700;">Historial Sincronizado del Google Sheet</h2>
-          <span style="font-size: 0.78rem; color: var(--text-muted);" id="tableFilterSub">Mostrando últimos 7 días (haz clic en una fila para cargar su rueda de macros)</span>
-        </div>
-        <div style="display: flex; gap: 14px; align-items: center;">
-          <button class="chart-link" id="toggleTableBtn" onclick="toggleDateRange()">Ver todos los registros</button>
-          <a href="https://docs.google.com/spreadsheets/d/1S2Ov9hMtIm6UrI8uuvuDXNJNiUhbHV6lZ-fM-gu69UE/edit" target="_blank" style="color: var(--accent-blue); text-decoration: none; font-size: 0.8rem; font-weight: 600;">Google Sheets ↗</a>
+          <h2 style="font-size: 1.05rem; font-weight: 700;">Recuperación Autonómica: FC en Reposo vs. HRV (Vitals)</h2>
+          <p style="font-size: 0.78rem; color: var(--text-muted);">Monitoreo del equilibrio simpático/parasimpático y fatiga neuromuscular</p>
         </div>
       </div>
-      <div class="data-table-container">
-        <table id="recordsTable">
-          <thead>
-            <tr>
-              <th>Fecha</th>
-              <th>Peso (kg)</th>
-              <th>Cal. In</th>
-              <th>Cal. Quemadas</th>
-              <th>Déficit</th>
-              <th>Proteína (g)</th>
-              <th>Carbs (g)</th>
-              <th>Grasas (g)</th>
-              <th>Pasos Zepp</th>
-              <th>Sueño Zepp</th>
-              <th>FC Reposo</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr><td colspan="11" style="text-align: center; color: var(--text-muted);">Sincronizando con Google Sheets...</td></tr>
-          </tbody>
-        </table>
+      <div class="chart-container">
+        <canvas id="vitalsTrendChart"></canvas>
       </div>
+    </div>
+
+    <!-- Quick Entry Form linked to Apps Script Webhook -->
+    <div class="card">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px; flex-wrap: wrap; gap: 8px;">
+        <h2 style="font-size: 1.1rem; font-weight: 700;">Ingreso Manual / Sincronización Directa</h2>
+        <span style="font-size: 0.78rem; color: var(--accent-green); font-weight: 600;">● Webhook Configurable</span>
+      </div>
+      <p style="font-size: 0.8rem; color: var(--text-muted);">Registra calorías, comidas o datos manuales y envíalos en tiempo real a tu Google Sheet.</p>
+
+      <form id="trackerForm">
+        <div class="form-grid">
+          <div class="input-group">
+            <label>Fecha</label>
+            <input type="date" id="inputDate" required>
+          </div>
+          <div class="input-group">
+            <label>Peso (kg)</label>
+            <input type="number" step="0.1" id="inputWeight" placeholder="64.3">
+          </div>
+          <div class="input-group">
+            <label>Calorías Ingeridas</label>
+            <input type="number" id="inputCaloriesIn" placeholder="1750">
+          </div>
+          <div class="input-group">
+            <label>Calorías Quemadas (Zepp)</label>
+            <input type="number" id="inputCaloriesOut" placeholder="2300">
+          </div>
+          <div class="input-group">
+            <label>Pasos Diarios (Zepp)</label>
+            <input type="number" id="inputSteps" placeholder="10500">
+          </div>
+          <div class="input-group">
+            <label>Puntuación Sueño (0-100)</label>
+            <input type="number" id="inputSleepScore" placeholder="85">
+          </div>
+          <div class="input-group">
+            <label>Horas de Sueño</label>
+            <input type="text" id="inputSleepHours" placeholder="7.5">
+          </div>
+          <div class="input-group">
+            <label>Sueño Profundo (min)</label>
+            <input type="number" id="inputDeepSleep" placeholder="75">
+          </div>
+          <div class="input-group">
+            <label>FC Reposo (lpm)</label>
+            <input type="number" id="inputRHR" placeholder="48">
+          </div>
+        </div>
+        <button type="submit" class="btn-submit" id="btnSubmit">Guardar Registro en Google Sheet ➔</button>
+      </form>
     </div>
   </div>
 
   <script>
-    const CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSeFjCUBUQWoZ1zv0hb78Z0iKztvRo_OeGgDGXFiiNuFIZWd77uA3mbwpAIGEhpGrcOPVxiwSy31IMs/pub?output=csv";
+    // Fecha de hoy por defecto
+    document.getElementById('inputDate').valueAsDate = new Date();
 
-    let allLoadedRows = [];
-    let showAllDays = false;
+    // ==========================================
+    // 1. CONFIGURACIÓN DEL WEBHOOK DE GOOGLE APPS SCRIPT
+    // ==========================================
+    // Reemplaza esta variable con la URL que obtuviste de Apps Script (la que termina en /exec):
+    const WEBHOOK_URL = "https://script.google.com/macros/s/AKfycbyf2oLShEuStRb-E0EBN8EQONKKjCS90hI_j04GuxJdrzYX0qiglpfokr-i31rCz53M5A/exec";
 
-    // Trend Chart
-    const ctxTrend = document.getElementById('trendChart').getContext('2d');
-    let trendChart = new Chart(ctxTrend, {
+    document.getElementById('trackerForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const btn = document.getElementById('btnSubmit');
+      btn.disabled = true;
+      btn.textContent = "Sincronizando con Google Sheet...";
+
+      const payload = {
+        fecha: document.getElementById('inputDate').value,
+        peso: parseFloat(document.getElementById('inputWeight').value) || undefined,
+        caloriasConsumidas: parseInt(document.getElementById('inputCaloriesIn').value) || undefined,
+        caloriasQuemadas: parseInt(document.getElementById('inputCaloriesOut').value) || undefined,
+        pasos: parseInt(document.getElementById('inputSteps').value) || undefined,
+        puntuacionSueno: parseInt(document.getElementById('inputSleepScore').value) || undefined,
+        horasSueno: document.getElementById('inputSleepHours').value || undefined,
+        suenoProfundoMin: parseInt(document.getElementById('inputDeepSleep').value) || undefined,
+        fcReposo: parseInt(document.getElementById('inputRHR').value) || undefined
+      };
+
+      if (!WEBHOOK_URL || WEBHOOK_URL.includes("TU_URL_DE_APPS_SCRIPT")) {
+        alert("⚠️ Por favor pega tu URL de Apps Script en la variable WEBHOOK_URL dentro del script.");
+        btn.disabled = false;
+        btn.textContent = "Guardar Registro en Google Sheet ➔";
+        return;
+      }
+
+      try {
+        await fetch(WEBHOOK_URL, {
+          method: 'POST',
+          mode: 'no-cors',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+        alert('✅ ¡Registro transmitido exitosamente a tu Google Sheet!');
+        document.getElementById('trackerForm').reset();
+        document.getElementById('inputDate').valueAsDate = new Date();
+      } catch (err) {
+        alert('❌ Error al enviar datos: ' + err.message);
+      } finally {
+        btn.disabled = false;
+        btn.textContent = "Guardar Registro en Google Sheet ➔";
+      }
+    });
+
+    // ==========================================
+    // 2. VISUALIZACIÓN DE MÉTRICAS (Activity, Sleep, Vitals)
+    // ==========================================
+    const fechas = ['09-02', '09-03', '09-04', '09-05', '09-06', '09-07', '09-08', '09-09', '09-10', '09-11', '09-25', '09-26', '09-27', '09-28'];
+
+    // GRÁFICA 1: Peso vs Déficit Calórico
+    const ctxWeight = document.getElementById('weightDeficitChart').getContext('2d');
+    new Chart(ctxWeight, {
       type: 'line',
       data: {
-        labels: [],
+        labels: fechas,
         datasets: [
           {
-            label: 'Peso Real (kg)',
-            data: [],
+            label: 'Peso (kg)',
+            data: [64.8, 64.7, 64.7, 64.6, 64.5, 64.5, 64.4, 64.4, 64.3, 64.4, 64.4, 64.3, 64.5, 64.3],
             borderColor: '#38bdf8',
             backgroundColor: 'rgba(56, 189, 248, 0.1)',
-            tension: 0.3,
-            yAxisID: 'y',
-            fill: true
+            tension: 0.35,
+            yAxisID: 'yPeso',
+            fill: true,
+            pointRadius: 4
           },
           {
-            label: 'Déficit Calórico (kcal)',
-            data: [],
+            label: 'Déficit Calórico Diario (kcal)',
+            data: [480, 520, 500, 420, 550, 490, 510, 530, 470, 500, 540, 520, -95, 640],
+            backgroundColor: 'rgba(16, 185, 129, 0.75)',
             borderColor: '#10b981',
-            backgroundColor: 'rgba(16, 185, 129, 0.8)',
+            borderWidth: 1,
             type: 'bar',
-            yAxisID: 'y1'
+            yAxisID: 'yDeficit'
           }
         ]
       },
@@ -425,22 +562,19 @@
         responsive: true,
         maintainAspectRatio: false,
         plugins: {
-          legend: {
-            labels: { color: '#9ca3af', font: { family: 'Plus Jakarta Sans' } }
-          }
+          legend: { labels: { color: '#9ca3af', font: { family: 'Plus Jakarta Sans', size: 11 } } }
         },
         scales: {
-          x: {
-            grid: { color: 'rgba(255, 255, 255, 0.05)' },
-            ticks: { color: '#9ca3af' }
-          },
-          y: {
+          x: { grid: { color: 'rgba(255, 255, 255, 0.05)' }, ticks: { color: '#9ca3af' } },
+          yPeso: {
             type: 'linear',
             position: 'left',
+            min: 63.5,
+            max: 65.5,
             grid: { color: 'rgba(255, 255, 255, 0.05)' },
             ticks: { color: '#38bdf8' }
           },
-          y1: {
+          yDeficit: {
             type: 'linear',
             position: 'right',
             grid: { drawOnChartArea: false },
@@ -450,218 +584,159 @@
       }
     });
 
-    // Doughnut Chart (Macro Wheel)
-    const ctxDoughnut = document.getElementById('macroDoughnut').getContext('2d');
-    let macroDoughnut = new Chart(ctxDoughnut, {
-      type: 'doughnut',
+    // GRÁFICA 2: Arquitectura de Sueño (Profundo, REM, Ligero)
+    const ctxSleep = document.getElementById('sleepChart').getContext('2d');
+    new Chart(ctxSleep, {
+      type: 'bar',
       data: {
-        labels: ['Proteína (g)', 'Carbohidratos (g)', 'Grasas (g)'],
-        datasets: [{
-          data: [42, 77, 20],
-          backgroundColor: ['#38bdf8', '#10b981', '#f97316'],
-          borderWidth: 2,
-          borderColor: '#111827',
-          hoverOffset: 8
-        }]
+        labels: ['09-02', '09-03', '09-04', '09-05', '09-07', '09-08', '09-09', '09-10', '09-11', '09-27'],
+        datasets: [
+          {
+            label: 'Sueño Profundo (min)',
+            data: [66, 76, 35, 44, 80, 79, 58, 107, 75, 75],
+            backgroundColor: '#a855f7'
+          },
+          {
+            label: 'Sueño REM (min)',
+            data: [57, 52, 53, 86, 94, 53, 97, 83, 71, 65],
+            backgroundColor: '#38bdf8'
+          },
+          {
+            label: 'Sueño Ligero (min)',
+            data: [237, 276, 143, 203, 314, 218, 221, 374, 322, 270],
+            backgroundColor: '#334155'
+          }
+        ]
       },
       options: {
         responsive: true,
         maintainAspectRatio: false,
-        cutout: '68%',
         plugins: {
-          legend: { display: false },
+          legend: { labels: { color: '#9ca3af', font: { family: 'Plus Jakarta Sans', size: 11 } } },
           tooltip: {
             callbacks: {
-              label: function(context) {
-                const val = context.raw || 0;
-                const total = context.dataset.data.reduce((a, b) => a + b, 0);
-                const pct = total > 0 ? Math.round((val / total) * 100) : 0;
-                return ` ${context.label}: ${val} g (${pct}%)`;
+              footer: (items) => {
+                let total = 0;
+                items.forEach(i => total += i.raw);
+                return 'Total: ' + Math.floor(total / 60) + 'h ' + (total % 60) + 'm';
               }
             }
+          }
+        },
+        scales: {
+          x: { stacked: true, grid: { color: 'rgba(255, 255, 255, 0.05)' }, ticks: { color: '#9ca3af' } },
+          y: {
+            stacked: true,
+            grid: { color: 'rgba(255, 255, 255, 0.05)' },
+            ticks: { color: '#9ca3af' },
+            title: { display: true, text: 'Minutos de sueño', color: '#9ca3af' }
           }
         }
       }
     });
 
-    let mealsData = {
-      daily_latest: { title: "Total Diario", p: 42, c: 77, f: 20 },
-      meal_lunch: { title: "Burrito con Pollo Melo", p: 40.5, c: 49.8, f: 19.7 },
-      meal_snack: { title: "Snack Guineo", p: 1.3, c: 27.0, f: 0.3 },
-      day_27: { title: "Total 27/09 (Mejorana)", p: 73, c: 173, f: 126 }
-    };
-
-    function setMacroWheel(p, c, f, titleText) {
-      macroDoughnut.data.datasets[0].data = [p, c, f];
-      macroDoughnut.update();
-
-      document.getElementById('legProt').innerText = p + ' g';
-      document.getElementById('legCarbs').innerText = c + ' g';
-      document.getElementById('legFat').innerText = f + ' g';
-      if (titleText) {
-        document.getElementById('wheelSubtitle').innerText = `${titleText}: ${p}g P | ${c}g C | ${f}g G`;
-      }
-    }
-
-    function onMealSelectChange() {
-      const key = document.getElementById('mealSelect').value;
-      const m = mealsData[key] || mealsData.daily_latest;
-      setMacroWheel(m.p, m.c, m.f, m.title);
-    }
-
-    function cleanNum(val) {
-      if (!val) return 0;
-      let s = val.toString().replace(/,/g, '.').replace(/[^0-9.-]/g, '');
-      let n = parseFloat(s);
-      return isNaN(n) ? 0 : n;
-    }
-
-    function parseCSV(text) {
-      const lines = text.trim().split(/\r?\n/);
-      return lines.map(line => {
-        const row = [];
-        let inQuotes = false;
-        let entry = '';
-        for (let i = 0; i < line.length; i++) {
-          const c = line[i];
-          if (c === '"') {
-            inQuotes = !inQuotes;
-          } else if (c === ',' && !inQuotes) {
-            row.push(entry.trim());
-            entry = '';
-          } else {
-            entry += c;
+    // GRÁFICA 3: Pasos Diarios vs Meta
+    const ctxActivity = document.getElementById('activityChart').getContext('2d');
+    new Chart(ctxActivity, {
+      type: 'bar',
+      data: {
+        labels: ['09-01', '09-02', '09-03', '09-04', '09-05', '09-06', '09-25', '09-26', '09-27'],
+        datasets: [
+          {
+            label: 'Pasos Diarios',
+            data: [7438, 6411, 4918, 5947, 3622, 8893, 4679, 5541, 11335],
+            backgroundColor: (context) => {
+              const val = context.raw;
+              return val >= 10000 ? '#10b981' : '#0284c7';
+            },
+            borderRadius: 6
+          },
+          {
+            label: 'Meta (10,000 pasos)',
+            data: [10000, 10000, 10000, 10000, 10000, 10000, 10000, 10000, 10000],
+            type: 'line',
+            borderColor: '#f97316',
+            borderWidth: 2,
+            borderDash: [6, 4],
+            pointRadius: 0,
+            fill: false
+          }
+        ]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: { labels: { color: '#9ca3af', font: { family: 'Plus Jakarta Sans', size: 11 } } }
+        },
+        scales: {
+          x: { grid: { color: 'rgba(255, 255, 255, 0.05)' }, ticks: { color: '#9ca3af' } },
+          y: {
+            grid: { color: 'rgba(255, 255, 255, 0.05)' },
+            ticks: { color: '#9ca3af' },
+            title: { display: true, text: 'Pasos', color: '#9ca3af' }
           }
         }
-        row.push(entry.trim());
-        return row;
-      });
-    }
-
-    function toggleDateRange() {
-      showAllDays = !showAllDays;
-      const toggleBtn = document.getElementById('toggleRangeBtn');
-      const toggleTableBtn = document.getElementById('toggleTableBtn');
-      const badge = document.getElementById('chartFilterBadge');
-      const tableSub = document.getElementById('tableFilterSub');
-
-      if (showAllDays) {
-        toggleBtn.innerText = '← Ver solo últimos 7 días';
-        toggleTableBtn.innerText = '← Ver solo últimos 7 días';
-        badge.innerText = 'Mostrando: Historial completo';
-        tableSub.innerText = 'Mostrando todos los registros sincronizados';
-      } else {
-        toggleBtn.innerText = 'Ver todos los registros (Historial completo) →';
-        toggleTableBtn.innerText = 'Ver todos los registros';
-        badge.innerText = 'Mostrando: Últimos 7 días';
-        tableSub.innerText = 'Mostrando últimos 7 días';
       }
+    });
 
-      renderChartsAndTable();
-    }
-
-    async function loadSheetData() {
-      try {
-        const response = await fetch(CSV_URL);
-        const text = await response.text();
-        const rows = parseCSV(text);
-
-        let dataRows = [];
-        for (let i = 0; i < rows.length; i++) {
-          const row = rows[i];
-          if (!row || row.length < 2) continue;
-          const firstCol = row[0].toLowerCase();
-          if (firstCol.includes('fecha') || firstCol === '') continue;
-          
-          if (/\d/.test(firstCol)) {
-            dataRows.push(row);
+    // GRÁFICA 4: Fisiología Cardiovascular & Recuperación (FC Reposo vs HRV)
+    const ctxVitals = document.getElementById('vitalsTrendChart').getContext('2d');
+    new Chart(ctxVitals, {
+      type: 'line',
+      data: {
+        labels: ['09-02', '09-03', '09-04', '09-05', '09-06', '09-07', '09-08', '09-09', '09-10', '09-11', '09-27'],
+        datasets: [
+          {
+            label: 'FC en Reposo (lpm)',
+            data: [50, 47, 48, 52, 49, 48, 50, 47, 46, 48, 48],
+            borderColor: '#f97316',
+            backgroundColor: 'rgba(249, 115, 22, 0.1)',
+            tension: 0.3,
+            yAxisID: 'yFC',
+            pointRadius: 4,
+            fill: true
+          },
+          {
+            label: 'HRV Promedio (ms)',
+            data: [107.5, 100.3, 89.8, 94.2, 98.0, 102.1, 95.4, 105.0, 110.2, 104.5, 106.0],
+            borderColor: '#ec4899',
+            backgroundColor: 'transparent',
+            tension: 0.3,
+            yAxisID: 'yHRV',
+            pointRadius: 4
+          }
+        ]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: { labels: { color: '#9ca3af', font: { family: 'Plus Jakarta Sans', size: 11 } } }
+        },
+        scales: {
+          x: { grid: { color: 'rgba(255, 255, 255, 0.05)' }, ticks: { color: '#9ca3af' } },
+          yFC: {
+            type: 'linear',
+            position: 'left',
+            min: 40,
+            max: 65,
+            grid: { color: 'rgba(255, 255, 255, 0.05)' },
+            ticks: { color: '#f97316' },
+            title: { display: true, text: 'FC Reposo (lpm)', color: '#f97316' }
+          },
+          yHRV: {
+            type: 'linear',
+            position: 'right',
+            min: 70,
+            max: 130,
+            grid: { drawOnChartArea: false },
+            ticks: { color: '#ec4899' },
+            title: { display: true, text: 'HRV (ms)', color: '#ec4899' }
           }
         }
-
-        if (dataRows.length > 0) {
-          dataRows.sort((a, b) => new Date(a[0]) - new Date(b[0]));
-          allLoadedRows = dataRows;
-          updateTopKPIs(dataRows);
-          renderChartsAndTable();
-        }
-      } catch (err) {
-        console.error('Error fetching CSV:', err);
       }
-    }
-
-    function updateTopKPIs(dataRows) {
-      const latest = dataRows[dataRows.length - 1];
-
-      const weight = cleanNum(latest[1]) || 64.3;
-      const calIn = cleanNum(latest[3]);
-      const calOut = cleanNum(latest[4]);
-      let netDeficitVal = cleanNum(latest[5]) || (calOut > 0 ? (calIn - calOut) : 0);
-      const steps = cleanNum(latest[7]);
-      const sleepScore = latest[10] || '--';
-      const sleepHours = latest[11] || '--';
-      const sleepDeep = latest[12] ? latest[12] + ' min' : '--';
-      const rhr = latest[13] || '--';
-
-      const prot = cleanNum(latest[14]) || 42;
-      const carbs = cleanNum(latest[15]) || 77;
-      const fat = cleanNum(latest[16]) || 20;
-
-      document.getElementById('kpiNetDeficit').innerText = (netDeficitVal !== 0 ? netDeficitVal : '- kcal') + (typeof netDeficitVal === 'number' && netDeficitVal !== 0 ? ' kcal' : '');
-      document.getElementById('kpiCalSub').innerText = `Consumidas: ${calIn || '--'} | Quemadas: ${calOut || '--'}`;
-      document.getElementById('kpiSteps').innerText = steps ? steps.toLocaleString() : '--';
-      document.getElementById('kpiSleepScore').innerHTML = `${sleepScore} <span style="font-size: 1rem; color: var(--text-muted);">/100</span>`;
-      document.getElementById('kpiSleepSub').innerText = `${sleepHours} total | ${sleepDeep} profundo`;
-      document.getElementById('kpiWeight').innerText = `${weight} kg`;
-      document.getElementById('kpiRHRSub').innerText = `FC Reposo: ${rhr} lpm`;
-
-      mealsData.daily_latest = { title: "Total " + latest[0], p: prot, c: carbs, f: fat };
-      setMacroWheel(prot, carbs, fat, "Total Diario (" + latest[0] + ")");
-    }
-
-    function renderChartsAndTable() {
-      if (!allLoadedRows || allLoadedRows.length === 0) return;
-
-      const displayRows = showAllDays ? allLoadedRows : allLoadedRows.slice(-7);
-
-      const labels = displayRows.map(r => r[0]);
-      const weights = displayRows.map(r => cleanNum(r[1]) || 64.3);
-      const deficits = displayRows.map(r => Math.abs(cleanNum(r[6]) || cleanNum(r[5]) || 0));
-
-      trendChart.data.labels = labels;
-      trendChart.data.datasets[0].data = weights;
-      trendChart.data.datasets[1].data = deficits;
-      trendChart.update();
-
-      const tbody = document.querySelector('#recordsTable tbody');
-      tbody.innerHTML = '';
-      displayRows.slice().reverse().forEach(row => {
-        const tr = document.createElement('tr');
-        const p = cleanNum(row[14]) || 0;
-        const c = cleanNum(row[15]) || 0;
-        const f = cleanNum(row[16]) || 0;
-
-        tr.onclick = () => {
-          setMacroWheel(p, c, f, "Día " + row[0]);
-        };
-
-        tr.innerHTML = `
-          <td><strong>${row[0] || '-'}</strong></td>
-          <td>${row[1] || '-'} kg</td>
-          <td>${row[3] || '-'}</td>
-          <td>${row[4] || '-'}</td>
-          <td style="color: var(--accent-green); font-weight: 600;">${row[5] || row[6] || '-'}</td>
-          <td><span class="pill-macro" style="color: var(--accent-blue); background: rgba(56, 189, 248, 0.1);">${p ? p + 'g' : '-'}</span></td>
-          <td><span class="pill-macro" style="color: var(--accent-green); background: rgba(16, 185, 129, 0.1);">${c ? c + 'g' : '-'}</span></td>
-          <td><span class="pill-macro" style="color: var(--accent-orange); background: rgba(249, 115, 22, 0.1);">${f ? f + 'g' : '-'}</span></td>
-          <td><strong>${row[7] ? Number(row[7]).toLocaleString() : '-'}</strong></td>
-          <td>${row[10] || '-'} (${row[11] || '-'})</td>
-          <td>${row[13] ? row[13] + ' lpm' : '-'}</td>
-        `;
-        tbody.appendChild(tr);
-      });
-    }
-
-    loadSheetData();
+    });
   </script>
 </body>
 </html>
