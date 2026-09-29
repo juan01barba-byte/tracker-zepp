@@ -53,7 +53,6 @@
       gap: 14px;
     }
 
-    /* Esquina superior derecha */
     .header-right {
       display: flex;
       align-items: center;
@@ -61,7 +60,6 @@
       gap: 10px;
     }
 
-    /* Reloj y Fecha Local en Vivo */
     .live-clock {
       display: inline-flex;
       align-items: center;
@@ -99,7 +97,6 @@
       font-weight: 600;
     }
 
-    /* Botón a registros.html */
     .btn-registros {
       display: inline-flex;
       align-items: center;
@@ -124,7 +121,6 @@
       box-shadow: 0 4px 14px rgba(56, 189, 248, 0.3);
     }
 
-    /* Sync banner */
     .sync-banner {
       background: linear-gradient(90deg, rgba(168, 85, 247, 0.12), rgba(56, 189, 248, 0.1));
       border: 1px solid rgba(168, 85, 247, 0.3);
@@ -138,7 +134,6 @@
       gap: 12px;
     }
 
-    /* KPIs */
     .grid-kpis {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
@@ -175,7 +170,6 @@
       margin-top: 6px;
     }
 
-    /* Grids de diseño */
     .grid-2col {
       display: grid;
       grid-template-columns: 1fr 1fr;
@@ -202,7 +196,6 @@
       margin-top: 10px;
     }
 
-    /* Macros */
     .macro-bar-container {
       margin-top: 14px;
     }
@@ -266,7 +259,6 @@
       font-weight: 800;
     }
 
-    /* Formulario */
     .form-grid {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
@@ -330,38 +322,31 @@
         <p style="color: var(--text-muted); font-size: 0.85rem; margin-top: 2px;">Sincronización en Vivo: Amazfit Bip ➔ Health Connect ➔ Google Sheets</p>
       </div>
 
-      <!-- Esquina Superior Derecha -->
       <div class="header-right">
-        <!-- Reloj y Fecha Local en Vivo -->
         <div class="live-clock">
           <span class="live-dot"></span>
           <span id="liveClockText">Cargando fecha y hora...</span>
         </div>
 
-        <!-- Tag Usuario -->
         <span class="user-tag" id="userHeaderTag">Juan Hurtado (63.46 kg | 1.64 m)</span>
 
-        <!-- Botón hacia registros.html -->
         <a href="registros.html" class="btn-registros">
           <span>📋</span> Ver Historial ➔
         </a>
-        <!-- Botón hacia sueno.html -->
         <a href="sueno.html" class="btn-registros" style="border-color: rgba(168, 85, 247, 0.4); color: #c084fc;">
           <span>💤</span> Meta-Análisis ➔
         </a>
       </div>
     </header>
 
-    <!-- Sync status banner -->
     <div class="sync-banner">
       <div>
-        <div style="font-weight: 700; color: var(--accent-purple); font-size: 0.95rem;">⚡ Pipeline de Métricas Activo (Registro Diario + Sleep + Activity)</div>
-        <div style="font-size: 0.82rem; color: var(--text-muted); margin-top: 2px;">Integración de datos en tiempo real: Peso, Nutrición, Pasos Zepp y Fases de Sueño</div>
+        <div style="font-weight: 700; color: var(--accent-purple); font-size: 0.95rem;">⚡ Pipeline de Métricas Activo (Registro Diario + Sleep + Activity + Vitals)</div>
+        <div style="font-size: 0.82rem; color: var(--text-muted); margin-top: 2px;">Sincronización en vivo con todas las pestañas de tu Google Sheet (Incluyendo FC en reposo y HRV)</div>
       </div>
       <a href="https://docs.google.com/spreadsheets/d/1S2Ov9hMtIm6UrI8uuvuDXNJNiUhbHV6lZ-fM-gu69UE/edit" target="_blank" style="color: var(--accent-blue); text-decoration: none; font-size: 0.85rem; font-weight: 600; background: rgba(56, 189, 248, 0.1); padding: 8px 14px; border-radius: 8px; border: 1px solid rgba(56, 189, 248, 0.2);">Abrir Google Sheet ↗</a>
     </div>
 
-    <!-- Top KPIs -->
     <div class="grid-kpis">
       <div class="card">
         <div class="card-title">Balance Calórico Diario</div>
@@ -390,9 +375,7 @@
       </div>
     </div>
 
-    <!-- Main Charts Section 1 -->
     <div class="grid-3col">
-      <!-- Weight & Caloric Deficit Trend -->
       <div class="card">
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
           <div>
@@ -405,7 +388,6 @@
         </div>
       </div>
 
-      <!-- Macros Card -->
       <div class="card">
         <h2 style="font-size: 1.05rem; font-weight: 700; margin-bottom: 4px;">Metas de Macronutrientes</h2>
         <p style="font-size: 0.78rem; color: var(--text-muted);" id="macroDateLabel">Objetivo base: 1,750 kcal/día</p>
@@ -462,9 +444,7 @@
       </div>
     </div>
 
-    <!-- Main Charts Section 2: Sleep & Activity -->
     <div class="grid-2col">
-      <!-- Sleep Architecture Stacked Bar Chart -->
       <div class="card">
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
           <div>
@@ -477,12 +457,11 @@
         </div>
       </div>
 
-      <!-- Activity & Steps vs Goal -->
       <div class="card">
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
           <div>
-            <h2 style="font-size: 1.05rem; font-weight: 700;">Pasos Diarios y Actividad Física (Zepp Activity)</h2>
-            <p style="font-size: 0.78rem; color: var(--text-muted);">Pasos registrados en tiempo real comparados contra la meta de 10,000 pasos</p>
+            <h2 style="font-size: 1.05rem; font-weight: 700;">Pasos Diarios y Actividad Física (Zepp)</h2>
+            <p style="font-size: 0.78rem; color: var(--text-muted);">Pasos registrados con meta dinámica en 10,000 pasos</p>
           </div>
         </div>
         <div class="chart-container">
@@ -491,12 +470,11 @@
       </div>
     </div>
 
-    <!-- Main Charts Section 3: Cardiovascular Recovery -->
     <div class="card" style="margin-bottom: 24px;">
       <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
         <div>
           <h2 style="font-size: 1.05rem; font-weight: 700;">Recuperación Autonómica: FC en Reposo vs. HRV (Vitals)</h2>
-          <p style="font-size: 0.78rem; color: var(--text-muted);">Monitoreo del equilibrio simpático/parasimpático y fatiga cardiovascular</p>
+          <p style="font-size: 0.78rem; color: var(--text-muted);">Monitoreo del equilibrio simpático/parasimpático y fatiga cardiovascular (Pestaña Vitals)</p>
         </div>
       </div>
       <div class="chart-container">
@@ -504,7 +482,6 @@
       </div>
     </div>
 
-    <!-- Quick Entry Form linked to Apps Script Webhook -->
     <div class="card">
       <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px; flex-wrap: wrap; gap: 8px;">
         <h2 style="font-size: 1.1rem; font-weight: 700;">Ingreso Manual / Sincronización Directa</h2>
@@ -557,27 +534,13 @@
   </div>
 
   <script>
-    // Fecha de hoy por defecto en el formulario
     document.getElementById('inputDate').valueAsDate = new Date();
 
-    // ==========================================
-    // 1. RELOJ Y FECHA LOCAL EN VIVO
-    // ==========================================
     function actualizarReloj() {
       const ahora = new Date();
-      const opcionesFecha = { 
-        weekday: 'short', 
-        day: 'numeric', 
-        month: 'short', 
-        year: 'numeric' 
-      };
+      const opcionesFecha = { weekday: 'short', day: 'numeric', month: 'short', year: 'numeric' };
       const fechaStr = ahora.toLocaleDateString('es-PA', opcionesFecha);
-      const horaStr = ahora.toLocaleTimeString('es-PA', { 
-        hour: '2-digit', 
-        minute: '2-digit', 
-        second: '2-digit', 
-        hour12: true 
-      });
+      const horaStr = ahora.toLocaleTimeString('es-PA', { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: true });
 
       const clockEl = document.getElementById('liveClockText');
       if (clockEl) {
@@ -587,9 +550,6 @@
     actualizarReloj();
     setInterval(actualizarReloj, 1000);
 
-    // ==========================================
-    // 2. CONFIGURACIÓN DEL WEBHOOK DE APPS SCRIPT
-    // ==========================================
     const WEBHOOK_URL = "https://script.google.com/macros/s/AKfycbyf2oLShEuStRb-E0EBN8EQONKKjCS90hI_j04GuxJdrzYX0qiglpfokr-i31rCz53M5A/exec";
 
     document.getElementById('trackerForm').addEventListener('submit', async (e) => {
@@ -629,12 +589,10 @@
       }
     });
 
-    // ==========================================
-    // 3. SINCRONIZACIÓN EN VIVO DESDE GOOGLE SHEETS
-    // ==========================================
     const CSV_URL = "https://docs.google.com/spreadsheets/d/1S2Ov9hMtIm6UrI8uuvuDXNJNiUhbHV6lZ-fM-gu69UE/export?format=csv";
     const SLEEP_CSV_URL = "https://docs.google.com/spreadsheets/d/1S2Ov9hMtIm6UrI8uuvuDXNJNiUhbHV6lZ-fM-gu69UE/gviz/tq?tqx=out:csv&sheet=Sleep";
     const ACTIVITY_CSV_URL = "https://docs.google.com/spreadsheets/d/1S2Ov9hMtIm6UrI8uuvuDXNJNiUhbHV6lZ-fM-gu69UE/gviz/tq?tqx=out:csv&sheet=Activity";
+    const VITALS_CSV_URL = "https://docs.google.com/spreadsheets/d/1S2Ov9hMtIm6UrI8uuvuDXNJNiUhbHV6lZ-fM-gu69UE/gviz/tq?tqx=out:csv&sheet=Vitals";
 
     function cleanNum(val) {
       if (val === undefined || val === null || val === '') return null;
@@ -674,11 +632,11 @@
       try {
         const timestamp = '&_t=' + new Date().getTime();
         
-        // Carga simultánea: pestaña 'Registro Diario', 'Sleep' y 'Activity'
-        const [resDaily, resSleep, resActivity] = await Promise.allSettled([
+        const [resDaily, resSleep, resActivity, resVitals] = await Promise.allSettled([
           fetch(CSV_URL + timestamp).then(r => r.text()),
           fetch(SLEEP_CSV_URL + timestamp).then(r => r.text()),
-          fetch(ACTIVITY_CSV_URL + timestamp).then(r => r.text())
+          fetch(ACTIVITY_CSV_URL + timestamp).then(r => r.text()),
+          fetch(VITALS_CSV_URL + timestamp).then(r => r.text())
         ]);
 
         let dataRows = [];
@@ -694,7 +652,6 @@
           dataRows.sort((a, b) => new Date(a[0]) - new Date(b[0]));
         }
 
-        // Parsear pestaña 'Sleep' con datos reales de todo el mes
         const sleepMap = {};
         if (resSleep.status === 'fulfilled') {
           const sleepRows = parseCSV(resSleep.value);
@@ -703,8 +660,8 @@
           for (let i = 1; i < sleepRows.length; i++) {
             const sr = sleepRows[i];
             if (!sr || sr.length < 8) continue;
-            const dateStr = sr[0]; // Date YYYY-MM-DD
-            const startTime = sr[3]; // Start Time
+            const dateStr = sr[0];
+            const startTime = sr[3];
             if (!dateStr || !/\d/.test(dateStr)) continue;
 
             const sessionKey = dateStr + '_' + (startTime || '');
@@ -726,7 +683,6 @@
           }
         }
 
-        // Parsear pestaña 'Activity' con los pasos reales de Amazfit / Zepp
         const activityMap = {};
         if (resActivity.status === 'fulfilled') {
           const actRows = parseCSV(resActivity.value);
@@ -738,7 +694,6 @@
             const steps = cleanNum(ar[3]);
             if (!dateStr || !/\d/.test(dateStr) || steps === null || steps <= 0) continue;
 
-            // Priorizar fuente Amazfit / Huami, o tomar el registro con más pasos
             if (!activityMap[dateStr] || source.includes('huami') || steps > activityMap[dateStr].steps) {
               activityMap[dateStr] = {
                 steps: steps,
@@ -749,25 +704,44 @@
           }
         }
 
-        if (dataRows.length > 0 || Object.keys(activityMap).length > 0) {
-          updateDashboard(dataRows, sleepMap, activityMap);
+        const vitalsMap = {};
+        if (resVitals.status === 'fulfilled') {
+          const vitRows = parseCSV(resVitals.value);
+          for (let i = 1; i < vitRows.length; i++) {
+            const vr = vitRows[i];
+            if (!vr || vr.length < 18) continue;
+            const dateStr = vr[0];
+            const source = (vr[1] || '').toLowerCase();
+            const hrv = cleanNum(vr[8]);
+            const rhr = cleanNum(vr[17]);
+            if (!dateStr || !/\d/.test(dateStr)) continue;
+
+            if (!vitalsMap[dateStr] || source.includes('huami') || (rhr !== null && rhr > 0)) {
+              vitalsMap[dateStr] = {
+                rhr: rhr,
+                hrv: hrv
+              };
+            }
+          }
+        }
+
+        if (dataRows.length > 0 || Object.keys(activityMap).length > 0 || Object.keys(vitalsMap).length > 0) {
+          updateDashboard(dataRows, sleepMap, activityMap, vitalsMap);
         }
       } catch (err) {
         console.error("Error al sincronizar con Google Sheets:", err);
       }
     }
 
-    function updateDashboard(dataRows, sleepMap, activityMap) {
+    function updateDashboard(dataRows, sleepMap, activityMap, vitalsMap) {
       const latest = dataRows[dataRows.length - 1];
 
-      // 1. Buscar peso más reciente
       let currentWeight = 63.46;
       for (let i = dataRows.length - 1; i >= 0; i--) {
         const w = cleanNum(dataRows[i][1]);
         if (w !== null && w > 0) { currentWeight = w; break; }
       }
 
-      // 2. Buscar pasos más recientes (priorizando pestaña 'Activity')
       let currentSteps = 0;
       const actDates = Object.keys(activityMap).sort();
       if (actDates.length > 0) {
@@ -780,7 +754,6 @@
         }
       }
 
-      // 3. Buscar datos de sueño de la última noche (desde Sleep Sheet o Registro Diario)
       let currentSleepScore = 82;
       let currentSleepHours = '6.4';
       let currentSleepDeep = 114;
@@ -805,37 +778,38 @@
         }
       }
 
-      // 4. Buscar FC reposo más reciente
       let currentRHR = 48;
-      for (let i = dataRows.length - 1; i >= 0; i--) {
-        const fc = cleanNum(dataRows[i][13]);
-        if (fc !== null && fc > 0) { currentRHR = fc; break; }
-      }
-
-      // 5. Buscar macros más recientes
-      let currentProt = 51, currentCarbs = 116, currentFat = 28;
-      let macroDate = latest ? latest[0] : '2026-09-28';
-      if (dataRows && dataRows.length > 0) {
+      let currentHRV = 107;
+      const vitalsDates = Object.keys(vitalsMap).sort();
+      if (vitalsDates.length > 0) {
+        const lastVitDate = vitalsDates[vitalsDates.length - 1];
+        if (vitalsMap[lastVitDate].rhr !== null) currentRHR = vitalsMap[lastVitDate].rhr;
+        if (vitalsMap[lastVitDate].hrv !== null) currentHRV = vitalsMap[lastVitDate].hrv;
+      } else {
         for (let i = dataRows.length - 1; i >= 0; i--) {
-          const p = cleanNum(dataRows[i][14]);
-          if (p !== null && p > 0) {
-            currentProt = p;
-            currentCarbs = cleanNum(dataRows[i][15]) || 116;
-            currentFat = cleanNum(dataRows[i][16]) || 28;
-            macroDate = dataRows[i][0];
-            break;
-          }
+          const fc = cleanNum(dataRows[i][13]);
+          if (fc !== null && fc > 0) { currentRHR = fc; break; }
         }
       }
 
-      const calIn = latest ? cleanNum(latest[3]) : null;
-      const calOut = latest ? cleanNum(latest[4]) : null;
-      let netDeficitText = (latest && latest[5]) || (calOut > 0 ? (calIn - calOut) + ' kcal' : '-640 kcal');
+      let currentProt = 51, currentCarbs = 116, currentFat = 28;
+      let macroDate = latest[0];
+      for (let i = dataRows.length - 1; i >= 0; i--) {
+        const p = cleanNum(dataRows[i][14]);
+        if (p !== null && p > 0) {
+          currentProt = p;
+          currentCarbs = cleanNum(dataRows[i][15]) || 116;
+          currentFat = cleanNum(dataRows[i][16]) || 28;
+          macroDate = dataRows[i][0];
+          break;
+        }
+      }
+
+      const calIn = cleanNum(latest[3]);
+      const calOut = cleanNum(latest[4]);
+      let netDeficitText = latest[5] || (calOut > 0 ? (calIn - calOut) + ' kcal' : '-640 kcal');
       if (typeof netDeficitText === 'number') netDeficitText = netDeficitText + ' kcal';
 
-      // -------------------------------------------------------------
-      // ACTUALIZAR KPIS SUPERIORES
-      // -------------------------------------------------------------
       document.getElementById('kpiNetDeficit').innerText = netDeficitText;
       document.getElementById('kpiCalSub').innerText = calIn ? `Ingeridas: ${calIn} kcal | TDEE: ${calOut || '~1,535'} kcal` : 'Seguimiento calórico activo';
       
@@ -846,14 +820,13 @@
       document.getElementById('kpiSleepSub').innerText = `${currentSleepHours}h total | ${currentSleepDeep}m profundo`;
 
       document.getElementById('kpiRHR').innerHTML = `${currentRHR} <span style="font-size: 0.95rem; color: var(--text-muted);">lpm</span>`;
-      document.getElementById('kpiRHRSub').innerText = `FC Reposo: ${currentRHR} lpm | HRV: 107 ms | SpO2: 98%`;
+      document.getElementById('kpiRHRSub').innerText = `FC Reposo: ${currentRHR} lpm | HRV: ${currentHRV.toFixed(0)} ms | SpO2: 98%`;
 
       document.getElementById('kpiWeight').innerHTML = `${currentWeight.toFixed(2)} <span style="font-size: 0.95rem; color: var(--text-muted);">kg</span>`;
       const toGoal = (currentWeight - 60.0).toFixed(2);
       document.getElementById('kpiWeightSub').innerText = `Faltan ${toGoal > 0 ? toGoal : 0} kg para la meta (60.0 kg)`;
       document.getElementById('userHeaderTag').innerText = `Juan Hurtado (${currentWeight.toFixed(2)} kg | 1.64 m)`;
 
-      // Actualizar tarjeta lateral de Macros
       document.getElementById('macroDateLabel').innerText = `Último registro (${macroDate}) · Meta: 1,750 kcal`;
       document.getElementById('protStatus').innerText = `${currentProt}g / 116g`;
       document.getElementById('protBarFill').style.width = Math.min(100, Math.round((currentProt / 116) * 100)) + '%';
@@ -865,10 +838,8 @@
       document.getElementById('fatBarFill').style.width = Math.min(100, Math.round((currentFat / 54) * 100)) + '%';
 
       document.getElementById('boxRHR').innerHTML = `${currentRHR} <span style="font-size: 0.7rem;">lpm</span>`;
+      document.getElementById('boxHRV').innerHTML = `${currentHRV.toFixed(0)} <span style="font-size: 0.7rem;">ms</span>`;
 
-      // -------------------------------------------------------------
-      // 1. GRÁFICA 1: Peso vs Déficit
-      // -------------------------------------------------------------
       const recentRows = dataRows.slice(-10);
       const labels = recentRows.map(r => r[0].length >= 10 ? r[0].slice(5) : r[0]);
 
@@ -931,9 +902,6 @@
         }
       });
 
-      // -------------------------------------------------------------
-      // 2. GRÁFICA 2: Arquitectura de Sueño (ALIMENTADA DESDE LA PESTAÑA 'Sleep')
-      // -------------------------------------------------------------
       let sleepLabels = [];
       let deepSleep = [];
       let remSleep = [];
@@ -942,7 +910,7 @@
       const availableSleepDates = Object.keys(sleepMap).sort();
       if (availableSleepDates.length > 0) {
         const targetDates = availableSleepDates.slice(-12);
-        sleepLabels = targetDates.map(d => d.slice(5)); // MM-DD
+        sleepLabels = targetDates.map(d => d.slice(5));
         deepSleep = targetDates.map(d => sleepMap[d].deep);
         remSleep = targetDates.map(d => sleepMap[d].rem);
         lightSleep = targetDates.map(d => sleepMap[d].light);
@@ -997,15 +965,12 @@
         }
       });
 
-      // -------------------------------------------------------------
-      // 3. GRÁFICA 3: Pasos Diarios vs Meta (10,000) - ALIMENTADA DESDE 'Activity'
-      // -------------------------------------------------------------
       let actLabels = [];
       let stepsData = [];
 
       if (actDates.length > 0) {
         const targetActDates = actDates.slice(-12);
-        actLabels = targetActDates.map(d => d.slice(5)); // MM-DD
+        actLabels = targetActDates.map(d => d.slice(5));
         stepsData = targetActDates.map(d => activityMap[d].steps);
       } else {
         actLabels = labels;
@@ -1052,18 +1017,27 @@
         }
       });
 
-      // -------------------------------------------------------------
-      // 4. GRÁFICA 4: FC en Reposo vs HRV
-      // -------------------------------------------------------------
-      const fcData = recentRows.map(r => cleanNum(r[13]) || 48);
-      const hrvData = [107.5, 100.3, 89.8, 94.2, 98.0, 102.1, 95.4, 105.0, 104.5, 107.0];
+      let vitalsLabels = [];
+      let fcData = [];
+      let hrvData = [];
+
+      if (vitalsDates.length > 0) {
+        const targetVitDates = vitalsDates.slice(-12);
+        vitalsLabels = targetVitDates.map(d => d.slice(5));
+        fcData = targetVitDates.map(d => vitalsMap[d].rhr || 48);
+        hrvData = targetVitDates.map(d => vitalsMap[d].hrv || 105);
+      } else {
+        vitalsLabels = labels;
+        fcData = recentRows.map(r => cleanNum(r[13]) || 48);
+        hrvData = [107.5, 100.3, 89.8, 94.2, 98.0, 102.1, 95.4, 105.0, 104.5, 107.0].slice(-labels.length);
+      }
 
       const ctxVitals = document.getElementById('vitalsTrendChart').getContext('2d');
       if (vitalsTrendChart) vitalsTrendChart.destroy();
       vitalsTrendChart = new Chart(ctxVitals, {
         type: 'line',
         data: {
-          labels: labels,
+          labels: vitalsLabels,
           datasets: [
             {
               label: 'FC en Reposo (lpm)',
@@ -1077,7 +1051,7 @@
             },
             {
               label: 'HRV Promedio (ms)',
-              data: hrvData.slice(-labels.length),
+              data: hrvData,
               borderColor: '#ec4899',
               backgroundColor: 'transparent',
               tension: 0.3,
@@ -1097,7 +1071,7 @@
               position: 'left',
               min: 40,
               max: 65,
-              grid: { color: 'rgba(255, 255, 255, 0.05)' }, 
+              grid: { color: 'rgba(255, 255, 255, 0.05)' },
               ticks: { color: '#f97316' },
               title: { display: true, text: 'FC Reposo (lpm)', color: '#f97316' }
             },
@@ -1106,7 +1080,7 @@
               position: 'right',
               min: 70,
               max: 130,
-              grid: { drawOnChartArea: false }, 
+              grid: { drawOnChartArea: false },
               ticks: { color: '#ec4899' },
               title: { display: true, text: 'HRV (ms)', color: '#ec4899' }
             }
@@ -1115,7 +1089,6 @@
       });
     }
 
-    // Iniciar carga de datos al abrir la página
     loadLiveData();
   </script>
 </body>
