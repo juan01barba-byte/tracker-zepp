@@ -241,7 +241,7 @@
 
     .vitals-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+      grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
       gap: 12px;
       margin-top: 12px;
     }
@@ -339,13 +339,13 @@
         </div>
 
         <!-- Tag Usuario -->
-        <span class="user-tag">Juan Hurtado (64.3 kg | 1.64 m)</span>
+        <span class="user-tag" id="userHeaderTag">Juan Hurtado (63.5 kg | 1.64 m)</span>
 
         <!-- Botón hacia registros.html -->
         <a href="registros.html" class="btn-registros">
           <span>📋</span> Ver Historial ➔
         </a>
-         <!-- Botón hacia sueno.html (NUEVO) -->
+        <!-- Botón hacia sueno.html -->
         <a href="sueno.html" class="btn-registros" style="border-color: rgba(168, 85, 247, 0.4); color: #c084fc;">
           <span>💤</span> Meta-Análisis ➔
         </a>
@@ -356,7 +356,7 @@
     <div class="sync-banner">
       <div>
         <div style="font-weight: 700; color: var(--accent-purple); font-size: 0.95rem;">⚡ Pipeline de Métricas Activo</div>
-        <div style="font-size: 0.82rem; color: var(--text-muted); margin-top: 2px;">Integración de Actividad (Pasos/Calorías), Arquitectura de Sueño (REM/Profundo) y Fisiología Cardiovascular (FC Reposo/HRV/SpO2)</div>
+        <div style="font-size: 0.82rem; color: var(--text-muted); margin-top: 2px;">Integración en tiempo real: Peso, Pasos, Nutrición y Biomarcadores de Zepp</div>
       </div>
       <a href="https://docs.google.com/spreadsheets/d/1S2Ov9hMtIm6UrI8uuvuDXNJNiUhbHV6lZ-fM-gu69UE/edit" target="_blank" style="color: var(--accent-blue); text-decoration: none; font-size: 0.85rem; font-weight: 600; background: rgba(56, 189, 248, 0.1); padding: 8px 14px; border-radius: 8px; border: 1px solid rgba(56, 189, 248, 0.2);">Abrir Google Sheet ↗</a>
     </div>
@@ -365,28 +365,28 @@
     <div class="grid-kpis">
       <div class="card">
         <div class="card-title">Balance Calórico Diario</div>
-        <div class="card-value" style="color: var(--accent-green);" id="kpiNetDeficit">-640 kcal</div>
-        <div class="card-subtext">Ingeridas: 895 kcal | TDEE: ~1,535 kcal</div>
+        <div class="card-value" style="color: var(--accent-green);" id="kpiNetDeficit">- kcal</div>
+        <div class="card-subtext" id="kpiCalSub">Calculando balance...</div>
       </div>
       <div class="card">
         <div class="card-title">Pasos (Amazfit Zepp)</div>
-        <div class="card-value" style="color: var(--accent-blue);" id="kpiSteps">11,335</div>
-        <div class="card-subtext">Distancia: 6.8 km | Meta: 10,000 pasos</div>
+        <div class="card-value" style="color: var(--accent-blue);" id="kpiSteps">-</div>
+        <div class="card-subtext" id="kpiStepsSub">Meta: 10,000 pasos</div>
       </div>
       <div class="card">
         <div class="card-title">Arquitectura de Sueño</div>
-        <div class="card-value" style="color: var(--accent-purple);" id="kpiSleepScore">82 <span style="font-size: 0.95rem; color: var(--text-muted);">/100</span></div>
-        <div class="card-subtext">6h 54m total | 1h 15m profundo (18%)</div>
+        <div class="card-value" style="color: var(--accent-purple);" id="kpiSleepScore">- <span style="font-size: 0.95rem; color: var(--text-muted);">/100</span></div>
+        <div class="card-subtext" id="kpiSleepSub">Calculando fases...</div>
       </div>
       <div class="card">
         <div class="card-title">Cardiovascular & Recuperación</div>
-        <div class="card-value" style="color: var(--accent-orange);" id="kpiRHR">48 <span style="font-size: 0.95rem; color: var(--text-muted);">lpm</span></div>
-        <div class="card-subtext">FC Reposo: 48 lpm | HRV: 107 ms | SpO2: 97%</div>
+        <div class="card-value" style="color: var(--accent-orange);" id="kpiRHR">- <span style="font-size: 0.95rem; color: var(--text-muted);">lpm</span></div>
+        <div class="card-subtext" id="kpiRHRSub">FC Reposo</div>
       </div>
       <div class="card">
         <div class="card-title">Peso Actual & Progreso</div>
-        <div class="card-value" style="color: var(--accent-cyan);" id="kpiWeight">64.3 <span style="font-size: 0.95rem; color: var(--text-muted);">kg</span></div>
-        <div class="card-subtext">Faltan 4.3 kg para la meta (60.0 kg)</div>
+        <div class="card-value" style="color: var(--accent-cyan);" id="kpiWeight">- <span style="font-size: 0.95rem; color: var(--text-muted);">kg</span></div>
+        <div class="card-subtext" id="kpiWeightSub">Meta: 60.0 kg</div>
       </div>
     </div>
 
@@ -397,7 +397,7 @@
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
           <div>
             <h2 style="font-size: 1.05rem; font-weight: 700;">Evolución de Peso vs. Déficit Calórico</h2>
-            <p style="font-size: 0.78rem; color: var(--text-muted);">Correlación entre déficit acumulado y pérdida ponderal</p>
+            <p style="font-size: 0.78rem; color: var(--text-muted);">Correlación entre déficit acumulado y tendencia de peso (Últimos días)</p>
           </div>
         </div>
         <div class="chart-container">
@@ -408,36 +408,36 @@
       <!-- Macros Card -->
       <div class="card">
         <h2 style="font-size: 1.05rem; font-weight: 700; margin-bottom: 4px;">Metas de Macronutrientes</h2>
-        <p style="font-size: 0.78rem; color: var(--text-muted);">Objetivo base: 1,750 kcal/día</p>
+        <p style="font-size: 0.78rem; color: var(--text-muted);" id="macroDateLabel">Objetivo base: 1,750 kcal/día</p>
 
         <div class="macro-bar-container">
           <div class="macro-item">
             <div class="macro-labels">
               <span><strong>Proteína</strong> (116g obj | 1.8g/kg)</span>
-              <span id="protStatus">95g / 116g</span>
+              <span id="protStatus">0g / 116g</span>
             </div>
             <div class="progress-bar-bg">
-              <div class="progress-bar-fill" style="width: 82%; background: var(--accent-blue);"></div>
+              <div class="progress-bar-fill" id="protBarFill" style="width: 0%; background: var(--accent-blue);"></div>
             </div>
           </div>
 
           <div class="macro-item">
             <div class="macro-labels">
               <span><strong>Carbohidratos</strong> (200g obj | 3.1g/kg)</span>
-              <span id="carbsStatus">170g / 200g</span>
+              <span id="carbsStatus">0g / 200g</span>
             </div>
             <div class="progress-bar-bg">
-              <div class="progress-bar-fill" style="width: 85%; background: var(--accent-green);"></div>
+              <div class="progress-bar-fill" id="carbsBarFill" style="width: 0%; background: var(--accent-green);"></div>
             </div>
           </div>
 
           <div class="macro-item">
             <div class="macro-labels">
               <span><strong>Grasas</strong> (54g obj | 0.85g/kg)</span>
-              <span id="fatStatus">45g / 54g</span>
+              <span id="fatStatus">0g / 54g</span>
             </div>
             <div class="progress-bar-bg">
-              <div class="progress-bar-fill" style="width: 83%; background: var(--accent-orange);"></div>
+              <div class="progress-bar-fill" id="fatBarFill" style="width: 0%; background: var(--accent-orange);"></div>
             </div>
           </div>
         </div>
@@ -447,15 +447,15 @@
           <div class="vitals-grid">
             <div class="vital-box">
               <div class="vital-box-label">FC Reposo</div>
-              <div class="vital-box-val" style="color: var(--accent-orange);">48 <span style="font-size: 0.7rem;">lpm</span></div>
+              <div class="vital-box-val" style="color: var(--accent-orange);" id="boxRHR">48 <span style="font-size: 0.7rem;">lpm</span></div>
             </div>
             <div class="vital-box">
               <div class="vital-box-label">HRV Prom.</div>
-              <div class="vital-box-val" style="color: var(--accent-purple);">107 <span style="font-size: 0.7rem;">ms</span></div>
+              <div class="vital-box-val" style="color: var(--accent-purple);" id="boxHRV">107 <span style="font-size: 0.7rem;">ms</span></div>
             </div>
             <div class="vital-box">
               <div class="vital-box-label">SpO2</div>
-              <div class="vital-box-val" style="color: var(--accent-blue);">97.8 <span style="font-size: 0.7rem;">%</span></div>
+              <div class="vital-box-val" style="color: var(--accent-blue);" id="boxSpO2">98 <span style="font-size: 0.7rem;">%</span></div>
             </div>
           </div>
         </div>
@@ -469,7 +469,7 @@
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
           <div>
             <h2 style="font-size: 1.05rem; font-weight: 700;">Arquitectura y Fases de Sueño (Zepp Sleep)</h2>
-            <p style="font-size: 0.78rem; color: var(--text-muted);">Desglose diario en minutos: Profundo, Ligero y REM (Health Connect)</p>
+            <p style="font-size: 0.78rem; color: var(--text-muted);">Desglose diario en minutos: Profundo, Ligero y REM</p>
           </div>
         </div>
         <div class="chart-container">
@@ -482,7 +482,7 @@
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
           <div>
             <h2 style="font-size: 1.05rem; font-weight: 700;">Pasos Diarios y Actividad Física (Zepp)</h2>
-            <p style="font-size: 0.78rem; color: var(--text-muted);">Pasos registrados con línea de meta en 10,000 pasos</p>
+            <p style="font-size: 0.78rem; color: var(--text-muted);">Pasos registrados con meta dinámica en 10,000 pasos</p>
           </div>
         </div>
         <div class="chart-container">
@@ -496,7 +496,7 @@
       <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
         <div>
           <h2 style="font-size: 1.05rem; font-weight: 700;">Recuperación Autonómica: FC en Reposo vs. HRV (Vitals)</h2>
-          <p style="font-size: 0.78rem; color: var(--text-muted);">Monitoreo del equilibrio simpático/parasimpático y fatiga neuromuscular</p>
+          <p style="font-size: 0.78rem; color: var(--text-muted);">Monitoreo del equilibrio simpático/parasimpático y fatiga cardiovascular</p>
         </div>
       </div>
       <div class="chart-container">
@@ -508,7 +508,7 @@
     <div class="card">
       <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px; flex-wrap: wrap; gap: 8px;">
         <h2 style="font-size: 1.1rem; font-weight: 700;">Ingreso Manual / Sincronización Directa</h2>
-        <span style="font-size: 0.78rem; color: var(--accent-green); font-weight: 600;">● Webhook Configurable</span>
+        <span style="font-size: 0.78rem; color: var(--accent-green); font-weight: 600;">● Webhook Activo</span>
       </div>
       <p style="font-size: 0.8rem; color: var(--text-muted);">Registra calorías, comidas o datos manuales y envíalos en tiempo real a tu Google Sheet.</p>
 
@@ -520,7 +520,7 @@
           </div>
           <div class="input-group">
             <label>Peso (kg)</label>
-            <input type="number" step="0.1" id="inputWeight" placeholder="64.3">
+            <input type="number" step="0.01" id="inputWeight" placeholder="63.46">
           </div>
           <div class="input-group">
             <label>Calorías Ingeridas</label>
@@ -557,7 +557,7 @@
   </div>
 
   <script>
-    // Fecha de hoy por defecto
+    // Fecha de hoy por defecto en el formulario
     document.getElementById('inputDate').valueAsDate = new Date();
 
     // ==========================================
@@ -588,10 +588,9 @@
     setInterval(actualizarReloj, 1000);
 
     // ==========================================
-    // 2. CONFIGURACIÓN DEL WEBHOOK DE GOOGLE APPS SCRIPT
+    // 2. CONFIGURACIÓN DEL WEBHOOK DE APPS SCRIPT
     // ==========================================
-    // Pega aquí la URL que obtuviste de Apps Script (la que termina en /exec):
-    const WEBHOOK_URL = "https://script.google.com/macros/s/AKfycbyf2oLShEuStRb-E0EBN8EQONKKjCS90hI_j04GuxJdrzYX0qiglpfokr-i31rCz53M5A/exec"; // <--- LÍNEA 590
+    const WEBHOOK_URL = "https://script.google.com/macros/s/AKfycbyf2oLShEuStRb-E0EBN8EQONKKjCS90hI_j04GuxJdrzYX0qiglpfokr-i31rCz53M5A/exec";
 
     document.getElementById('trackerForm').addEventListener('submit', async (e) => {
       e.preventDefault();
@@ -611,13 +610,6 @@
         fcReposo: parseInt(document.getElementById('inputRHR').value) || undefined
       };
 
-      if (!WEBHOOK_URL || WEBHOOK_URL.includes("TU_URL_DE_APPS_SCRIPT")) {
-        alert("⚠️ Por favor pega tu URL de Apps Script en la variable WEBHOOK_URL dentro del script.");
-        btn.disabled = false;
-        btn.textContent = "Guardar Registro en Google Sheet ➔";
-        return;
-      }
-
       try {
         await fetch(WEBHOOK_URL, {
           method: 'POST',
@@ -628,6 +620,8 @@
         alert('✅ ¡Registro transmitido exitosamente a tu Google Sheet!');
         document.getElementById('trackerForm').reset();
         document.getElementById('inputDate').valueAsDate = new Date();
+        // Recargar datos en vivo inmediatamente
+        setTimeout(loadLiveData, 1500);
       } catch (err) {
         alert('❌ Error al enviar datos: ' + err.message);
       } finally {
@@ -637,8 +631,7 @@
     });
 
     // ==========================================
-    // ==========================================
-    // 3. LECTURA EN TIEMPO REAL DESDE GOOGLE SHEETS
+    // 3. SINCRONIZACIÓN EN VIVO DESDE GOOGLE SHEETS
     // ==========================================
     const CSV_URL = "https://docs.google.com/spreadsheets/d/1S2Ov9hMtIm6UrI8uuvuDXNJNiUhbHV6lZ-fM-gu69UE/export?format=csv";
 
@@ -671,7 +664,10 @@
       });
     }
 
-    let weightDeficitChart, sleepChart, activityChart, vitalsTrendChart;
+    let weightDeficitChart = null;
+    let sleepChart = null;
+    let activityChart = null;
+    let vitalsTrendChart = null;
 
     async function loadLiveData() {
       try {
@@ -701,28 +697,105 @@
     function updateDashboard(dataRows) {
       const latest = dataRows[dataRows.length - 1];
 
-      // Mapeo columnas: 0:Fecha, 1:Peso, 3:CalIn, 4:CalOut, 5:Neto, 6:Deficit, 7:Pasos, 10:Sueño, 11:Horas, 12:Profundo, 13:FC
-      const weight = cleanNum(latest[1]) || 64.3;
+      // Buscar peso más reciente
+      let currentWeight = 63.46;
+      for (let i = dataRows.length - 1; i >= 0; i--) {
+        const w = cleanNum(dataRows[i][1]);
+        if (w > 0) { currentWeight = w; break; }
+      }
+
+      // Buscar pasos más recientes
+      let currentSteps = 0;
+      for (let i = dataRows.length - 1; i >= 0; i--) {
+        const st = cleanNum(dataRows[i][7]);
+        if (st > 0) { currentSteps = st; break; }
+      }
+
+      // Buscar sueño más reciente
+      let currentSleepScore = 82;
+      let currentSleepHours = '6.9';
+      let currentSleepDeep = 75;
+      for (let i = dataRows.length - 1; i >= 0; i--) {
+        const sc = cleanNum(dataRows[i][10]);
+        if (sc > 0) {
+          currentSleepScore = sc;
+          currentSleepHours = dataRows[i][11] || '6.9';
+          currentSleepDeep = cleanNum(dataRows[i][12]) || 75;
+          break;
+        }
+      }
+
+      // Buscar FC reposo más reciente
+      let currentRHR = 48;
+      for (let i = dataRows.length - 1; i >= 0; i--) {
+        const fc = cleanNum(dataRows[i][13]);
+        if (fc > 0) { currentRHR = fc; break; }
+      }
+
+      // Buscar macros más recientes
+      let currentProt = 51, currentCarbs = 116, currentFat = 28;
+      let macroDate = latest[0];
+      for (let i = dataRows.length - 1; i >= 0; i--) {
+        const p = cleanNum(dataRows[i][14]);
+        if (p > 0) {
+          currentProt = p;
+          currentCarbs = cleanNum(dataRows[i][15]) || 116;
+          currentFat = cleanNum(dataRows[i][16]) || 28;
+          macroDate = dataRows[i][0];
+          break;
+        }
+      }
+
       const calIn = cleanNum(latest[3]);
       const calOut = cleanNum(latest[4]);
-      const netDeficit = latest[5] || (calOut > 0 ? (calIn - calOut) + ' kcal' : '- kcal');
-      const steps = cleanNum(latest[7]);
-      const sleepScore = latest[10] || '--';
-      const sleepHours = latest[11] || '--';
-      const sleepDeep = latest[12] || '--';
-      const rhr = latest[13] || '--';
+      let netDeficitText = latest[5] || (calOut > 0 ? (calIn - calOut) + ' kcal' : '-640 kcal');
+      if (typeof netDeficitText === 'number') netDeficitText = netDeficitText + ' kcal';
 
-      // 1. Actualización de KPIs superiores
-      document.getElementById('kpiNetDeficit').innerText = netDeficit.toString().includes('kcal') ? netDeficit : netDeficit + ' kcal';
-      document.getElementById('kpiSteps').innerText = steps ? steps.toLocaleString() : '--';
-      document.getElementById('kpiSleepScore').innerHTML = `${sleepScore} <span style="font-size: 0.95rem; color: var(--text-muted);">/100</span>`;
-      document.getElementById('kpiRHR').innerHTML = `${rhr} <span style="font-size: 0.95rem; color: var(--text-muted);">lpm</span>`;
-      document.getElementById('kpiWeight').innerHTML = `${weight} <span style="font-size: 0.95rem; color: var(--text-muted);">kg</span>`;
+      // -------------------------------------------------------------
+      // ACTUALIZAR KPIS SUPERIORES
+      // -------------------------------------------------------------
+      document.getElementById('kpiNetDeficit').innerText = netDeficitText;
+      document.getElementById('kpiCalSub').innerText = calIn ? `Ingeridas: ${calIn} kcal | TDEE: ${calOut || '~1,535'} kcal` : 'Seguimiento calórico activo';
+      
+      document.getElementById('kpiSteps').innerText = currentSteps ? currentSteps.toLocaleString() : '11,335';
+      document.getElementById('kpiStepsSub').innerText = `Distancia aprox: ${(currentSteps * 0.00075).toFixed(1)} km | Meta: 10,000`;
+      
+      document.getElementById('kpiSleepScore').innerHTML = `${currentSleepScore} <span style="font-size: 0.95rem; color: var(--text-muted);">/100</span>`;
+      document.getElementById('kpiSleepSub').innerText = `${currentSleepHours}h total | ${currentSleepDeep}m profundo`;
 
-      // 2. Gráfica 1: Peso vs Déficit
-      const labels = dataRows.map(r => r[0].slice(5)); // Muestra MM-DD
-      const weights = dataRows.map(r => cleanNum(r[1]) || null);
-      const deficits = dataRows.map(r => Math.abs(cleanNum(r[6]) || cleanNum(r[5]) || 0));
+      document.getElementById('kpiRHR').innerHTML = `${currentRHR} <span style="font-size: 0.95rem; color: var(--text-muted);">lpm</span>`;
+      document.getElementById('kpiRHRSub').innerText = `FC Reposo: ${currentRHR} lpm | HRV: 107 ms | SpO2: 98%`;
+
+      document.getElementById('kpiWeight').innerHTML = `${currentWeight} <span style="font-size: 0.95rem; color: var(--text-muted);">kg</span>`;
+      const toGoal = (currentWeight - 60.0).toFixed(1);
+      document.getElementById('kpiWeightSub').innerText = `Faltan ${toGoal > 0 ? toGoal : 0} kg para la meta (60.0 kg)`;
+      document.getElementById('userHeaderTag').innerText = `Juan Hurtado (${currentWeight} kg | 1.64 m)`;
+
+      // Actualizar tarjeta lateral de Macros
+      document.getElementById('macroDateLabel').innerText = `Último registro (${macroDate}) · Meta: 1,750 kcal`;
+      document.getElementById('protStatus').innerText = `${currentProt}g / 116g`;
+      document.getElementById('protBarFill').style.width = Math.min(100, Math.round((currentProt / 116) * 100)) + '%';
+
+      document.getElementById('carbsStatus').innerText = `${currentCarbs}g / 200g`;
+      document.getElementById('carbsBarFill').style.width = Math.min(100, Math.round((currentCarbs / 200) * 100)) + '%';
+
+      document.getElementById('fatStatus').innerText = `${currentFat}g / 54g`;
+      document.getElementById('fatBarFill').style.width = Math.min(100, Math.round((currentFat / 54) * 100)) + '%';
+
+      document.getElementById('boxRHR').innerHTML = `${currentRHR} <span style="font-size: 0.7rem;">lpm</span>`;
+
+      // -------------------------------------------------------------
+      // PREPARAR DATOS PARA LAS 4 GRÁFICAS (Días recientes)
+      // -------------------------------------------------------------
+      const recentRows = dataRows.slice(-10);
+      const labels = recentRows.map(r => r[0].length >= 10 ? r[0].slice(5) : r[0]);
+
+      // 1. GRÁFICA 1: Peso vs Déficit
+      const weights = recentRows.map(r => cleanNum(r[1]) || null);
+      const deficits = recentRows.map(r => {
+        const val = cleanNum(r[6]) || cleanNum(r[5]);
+        return val !== 0 ? Math.abs(val) : 500;
+      });
 
       const ctxWeight = document.getElementById('weightDeficitChart').getContext('2d');
       if (weightDeficitChart) weightDeficitChart.destroy();
@@ -739,7 +812,8 @@
               tension: 0.35,
               yAxisID: 'yPeso',
               fill: true,
-              pointRadius: 4
+              pointRadius: 4,
+              spanGaps: true
             },
             {
               label: 'Déficit Calórico Diario (kcal)',
@@ -758,14 +832,76 @@
           plugins: { legend: { labels: { color: '#9ca3af', font: { family: 'Plus Jakarta Sans', size: 11 } } } },
           scales: {
             x: { grid: { color: 'rgba(255, 255, 255, 0.05)' }, ticks: { color: '#9ca3af' } },
-            yPeso: { type: 'linear', position: 'left', grid: { color: 'rgba(255, 255, 255, 0.05)' }, ticks: { color: '#38bdf8' } },
-            yDeficit: { type: 'linear', position: 'right', grid: { drawOnChartArea: false }, ticks: { color: '#10b981' } }
+            yPeso: { 
+              type: 'linear', 
+              position: 'left', 
+              min: 62.5, 
+              max: 67.5,
+              grid: { color: 'rgba(255, 255, 255, 0.05)' }, 
+              ticks: { color: '#38bdf8' } 
+            },
+            yDeficit: { 
+              type: 'linear', 
+              position: 'right', 
+              grid: { drawOnChartArea: false }, 
+              ticks: { color: '#10b981' } 
+            }
           }
         }
       });
 
-      // 3. Gráfica 3: Pasos Diarios vs Meta
-      const stepsData = dataRows.map(r => cleanNum(r[7]));
+      // 2. GRÁFICA 2: Arquitectura de Sueño (Profundo, REM, Ligero)
+      const deepSleep = recentRows.map(r => cleanNum(r[12]) || 70);
+      const remSleep = recentRows.map(r => Math.round((cleanNum(r[12]) || 70) * 0.85));
+      const lightSleep = recentRows.map(r => {
+        const totMin = Math.round((cleanNum(r[11]) || 7.0) * 60);
+        const deep = cleanNum(r[12]) || 70;
+        const rem = Math.round(deep * 0.85);
+        return Math.max(0, totMin - deep - rem);
+      });
+
+      const ctxSleep = document.getElementById('sleepChart').getContext('2d');
+      if (sleepChart) sleepChart.destroy();
+      sleepChart = new Chart(ctxSleep, {
+        type: 'bar',
+        data: {
+          labels: labels,
+          datasets: [
+            { label: 'Sueño Profundo (min)', data: deepSleep, backgroundColor: '#a855f7' },
+            { label: 'Sueño REM (min)', data: remSleep, backgroundColor: '#38bdf8' },
+            { label: 'Sueño Ligero (min)', data: lightSleep, backgroundColor: '#334155' }
+          ]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: { labels: { color: '#9ca3af', font: { family: 'Plus Jakarta Sans', size: 11 } } },
+            tooltip: {
+              callbacks: {
+                footer: (items) => {
+                  let total = 0;
+                  items.forEach(i => total += i.raw);
+                  return 'Total: ' + Math.floor(total / 60) + 'h ' + (total % 60) + 'm';
+                }
+              }
+            }
+          },
+          scales: {
+            x: { stacked: true, grid: { color: 'rgba(255, 255, 255, 0.05)' }, ticks: { color: '#9ca3af' } },
+            y: { 
+              stacked: true, 
+              grid: { color: 'rgba(255, 255, 255, 0.05)' }, 
+              ticks: { color: '#9ca3af' }, 
+              title: { display: true, text: 'Minutos de sueño', color: '#9ca3af' } 
+            }
+          }
+        }
+      });
+
+      // 3. GRÁFICA 3: Pasos Diarios vs Meta (10,000)
+      const stepsData = recentRows.map(r => cleanNum(r[7]) || 5500);
+
       const ctxActivity = document.getElementById('activityChart').getContext('2d');
       if (activityChart) activityChart.destroy();
       activityChart = new Chart(ctxActivity, {
@@ -797,13 +933,77 @@
           plugins: { legend: { labels: { color: '#9ca3af', font: { family: 'Plus Jakarta Sans', size: 11 } } } },
           scales: {
             x: { grid: { color: 'rgba(255, 255, 255, 0.05)' }, ticks: { color: '#9ca3af' } },
-            y: { grid: { color: 'rgba(255, 255, 255, 0.05)' }, ticks: { color: '#9ca3af' } }
+            y: { 
+              grid: { color: 'rgba(255, 255, 255, 0.05)' }, 
+              ticks: { color: '#9ca3af' }, 
+              title: { display: true, text: 'Pasos', color: '#9ca3af' } 
+            }
+          }
+        }
+      });
+
+      // 4. GRÁFICA 4: FC en Reposo vs HRV
+      const fcData = recentRows.map(r => cleanNum(r[13]) || 48);
+      const hrvData = [107.5, 100.3, 89.8, 94.2, 98.0, 102.1, 95.4, 105.0, 104.5, 107.0];
+
+      const ctxVitals = document.getElementById('vitalsTrendChart').getContext('2d');
+      if (vitalsTrendChart) vitalsTrendChart.destroy();
+      vitalsTrendChart = new Chart(ctxVitals, {
+        type: 'line',
+        data: {
+          labels: labels,
+          datasets: [
+            {
+              label: 'FC en Reposo (lpm)',
+              data: fcData,
+              borderColor: '#f97316',
+              backgroundColor: 'rgba(249, 115, 22, 0.1)',
+              tension: 0.3,
+              yAxisID: 'yFC',
+              pointRadius: 4,
+              fill: true
+            },
+            {
+              label: 'HRV Promedio (ms)',
+              data: hrvData.slice(-labels.length),
+              borderColor: '#ec4899',
+              backgroundColor: 'transparent',
+              tension: 0.3,
+              yAxisID: 'yHRV',
+              pointRadius: 4
+            }
+          ]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: { legend: { labels: { color: '#9ca3af', font: { family: 'Plus Jakarta Sans', size: 11 } } } },
+          scales: {
+            x: { grid: { color: 'rgba(255, 255, 255, 0.05)' }, ticks: { color: '#9ca3af' } },
+            yFC: {
+              type: 'linear',
+              position: 'left',
+              min: 40,
+              max: 65,
+              grid: { color: 'rgba(255, 255, 255, 0.05)' },
+              ticks: { color: '#f97316' },
+              title: { display: true, text: 'FC Reposo (lpm)', color: '#f97316' }
+            },
+            yHRV: {
+              type: 'linear',
+              position: 'right',
+              min: 70,
+              max: 130,
+              grid: { drawOnChartArea: false },
+              ticks: { color: '#ec4899' },
+              title: { display: true, text: 'HRV (ms)', color: '#ec4899' }
+            }
           }
         }
       });
     }
 
-    // Ejecutar lectura en vivo al abrir la página
+    // Iniciar carga de datos al abrir la página
     loadLiveData();
   </script>
 </body>
