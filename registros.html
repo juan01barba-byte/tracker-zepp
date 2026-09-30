@@ -248,7 +248,8 @@
       padding: 4px 8px;
       border-radius: 6px;
       display: inline-block;
-      max-width: 320px;
+      max-width: 340px;
+      word-break: break-word;
     }
   </style>
 </head>
@@ -328,8 +329,8 @@
 
   <script>
     const SPREADSHEET_ID = "1S2Ov9hMtIm6UrI8uuvuDXNJNiUhbHV6lZ-fM-gu69UE";
-    // gid=0 apunta explícitamente a la pestaña "Registro Diario"
-    const CSV_URL = `https://docs.google.com/spreadsheets/d/${SPREADSHEET_ID}/export?format=csv&gid=0`;
+    // Usamos el endpoint gviz oficial que no sufre de restricciones de CORS en llamadas fetch directas
+    const CSV_URL = `https://docs.google.com/spreadsheets/d/${SPREADSHEET_ID}/gviz/tq?tqx=out:csv&sheet=Registro%20Diario`;
 
     function cleanNum(val) {
       if (val === undefined || val === null || val === '') return null;
@@ -339,6 +340,7 @@
     }
 
     function parseCSV(text) {
+      if (!text) return [];
       const lines = text.trim().split(/\r?\n/);
       return lines.map(line => {
         const row = [];
@@ -373,8 +375,8 @@
         
         const text = await response.text();
 
-        // Evitar re-renderizado innecesario si la data del sheet no ha cambiado
-        if (text === lastLoadedRawData) {
+        // Evitar re-render si no hay cambios en el Sheet
+        if (text === lastLoadedRawData && rawRecords.length > 0) {
           updateSyncIndicator();
           return;
         }
@@ -383,12 +385,12 @@
         const rows = parseCSV(text);
         const parsed = [];
 
-        // Mapeo columnas Sheet:
+        // Mapeo columnas Sheet 'Registro Diario':
         // 0:Fecha, 1:Peso (kg), 2:Promedio Móvil, 3:Cal In, 4:Cal Out, 5:Neto, 6:Deficit, 7:Pasos, 8:Agua, 9:Notas, 10:Score, 11:Horas, 12:Profundo, 13:FC, 14:Prot, 15:Carbs, 16:Grasas
         for (let i = 0; i < rows.length; i++) {
           const r = rows[i];
           if (!r || r.length < 2) continue;
-          const fecha = r[0];
+          const fecha = (r[0] || '').trim();
           if (!fecha || fecha.toLowerCase().includes('fecha') || !/\d/.test(fecha)) continue;
 
           const peso = cleanNum(r[1]);
@@ -425,7 +427,7 @@
           if (calIn !== null || prot !== null || carbs !== null || grasas !== null) {
             let pStr = calIn !== null ? `${calIn} kcal ingeridas` : '';
             if (deficit !== null) pStr += ` | Déficit: ${deficit > 0 ? '-' + deficit : Math.abs(deficit)} kcal`;
-            let macroStr = `Macros: ${prot || 0}g P | ${carbs || 0}g C | ${grasas || 0}g G`;
+            let macroStr = `Macros: ${prot ? Math.round(prot) : 0}g P | ${carbs ? Math.round(carbs) : 0}g C | ${grasas ? Math.round(grasas) : 0}g G`;
             parsed.push({
               date: fecha,
               type: 'NUTRITION',
@@ -568,7 +570,7 @@
       renderRecordsTable();
     }
 
-    // Carga inicial y auto-sincronización cada 30 segundos
+    // Carga inicial y auto-sincronización en vivo cada 30 segundos
     fetchLiveData();
     setInterval(fetchLiveData, 30000);
   </script>
