@@ -258,9 +258,9 @@
       <div>
         <div style="display: flex; align-items: center; gap: 10px;">
           <h1 style="font-size: 1.5rem; font-weight: 800;">Historial Cronológico de Registros</h1>
-          <span class="sync-badge"><span class="sync-dot"></span> Sincronizado en Vivo</span>
+          <span class="sync-badge"><span class="sync-dot"></span> <span id="syncText">Sincronizado en Vivo</span></span>
         </div>
-        <p style="color: var(--text-muted); font-size: 0.85rem; margin-top: 2px;">Conectado a Google Sheets: Se actualiza solo al añadir nuevos días</p>
+        <p style="color: var(--text-muted); font-size: 0.85rem; margin-top: 2px;">Conectado a Google Sheets: Se actualiza solo al añadir nuevos días o comidas</p>
       </div>
       <div style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap;">
         <a href="index.html" class="btn-back">⬅ Volver al Dashboard</a>
@@ -327,10 +327,10 @@
   </div>
 
   <script>
-    // Enlace directo en tiempo real al Google Sheet
-    const CSV_URL = "https://docs.google.com/spreadsheets/d/1S2Ov9hMtIm6UrI8uuvuDXNJNiUhbHV6lZ-fM-gu69UE/export?format=csv";
+    const SPREADSHEET_ID = "1S2Ov9hMtIm6UrI8uuvuDXNJNiUhbHV6lZ-fM-gu69UE";
+    // gid=0 apunta explícitamente a la pestaña "Registro Diario"
+    const CSV_URL = `https://docs.google.com/spreadsheets/d/${SPREADSHEET_ID}/export?format=csv&gid=0`;
 
-    // Preserva decimales exactos (ej. 63.46, 64.23, etc.)
     function cleanNum(val) {
       if (val === undefined || val === null || val === '') return null;
       let s = val.toString().replace(/,/g, '.').replace(/[^0-9.-]/g, '');
@@ -363,14 +363,24 @@
     let rawRecords = [];
     let currentCategory = 'ALL';
     let sortDescending = true;
+    let lastLoadedRawData = '';
 
     async function fetchLiveData() {
       try {
-        const noCacheUrl = CSV_URL + '&_t=' + new Date().getTime();
-        const response = await fetch(noCacheUrl);
+        const noCacheUrl = CSV_URL + '&_t=' + Date.now();
+        const response = await fetch(noCacheUrl, { cache: 'no-store' });
+        if (!response.ok) throw new Error(`HTTP ${response.status}`);
+        
         const text = await response.text();
-        const rows = parseCSV(text);
 
+        // Evitar re-renderizado innecesario si la data del sheet no ha cambiado
+        if (text === lastLoadedRawData) {
+          updateSyncIndicator();
+          return;
+        }
+
+        lastLoadedRawData = text;
+        const rows = parseCSV(text);
         const parsed = [];
 
         // Mapeo columnas Sheet:
@@ -396,7 +406,7 @@
           const carbs = cleanNum(r[15]);
           const grasas = cleanNum(r[16]);
 
-          // 1. Registro de Composición / Peso (con decimales exactos)
+          // 1. Registro de Composición / Peso
           if (peso !== null && peso > 0) {
             const lbs = (peso * 2.20462).toFixed(1);
             let secText = promPeso ? `Promedio Móvil: ${promPeso.toFixed(2)} kg` : 'Medición ponderal registrada';
@@ -476,9 +486,19 @@
           updateCounters();
           renderRecordsTable();
         }
+        updateSyncIndicator();
       } catch (err) {
         console.error("Error al sincronizar historial:", err);
+        const syncEl = document.getElementById('syncText');
+        if (syncEl) syncEl.textContent = 'Error de conexión';
       }
+    }
+
+    function updateSyncIndicator() {
+      const now = new Date();
+      const timeStr = now.toLocaleTimeString('es-PA', { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: true });
+      const syncEl = document.getElementById('syncText');
+      if (syncEl) syncEl.textContent = `En vivo · ${timeStr}`;
     }
 
     function updateCounters() {
@@ -548,7 +568,9 @@
       renderRecordsTable();
     }
 
+    // Carga inicial y auto-sincronización cada 30 segundos
     fetchLiveData();
+    setInterval(fetchLiveData, 30000);
   </script>
 </body>
 </html>
