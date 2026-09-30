@@ -589,10 +589,11 @@
       }
     });
 
-    const CSV_URL = "https://docs.google.com/spreadsheets/d/1S2Ov9hMtIm6UrI8uuvuDXNJNiUhbHV6lZ-fM-gu69UE/export?format=csv";
-    const SLEEP_CSV_URL = "https://docs.google.com/spreadsheets/d/1S2Ov9hMtIm6UrI8uuvuDXNJNiUhbHV6lZ-fM-gu69UE/gviz/tq?tqx=out:csv&sheet=Sleep";
-    const ACTIVITY_CSV_URL = "https://docs.google.com/spreadsheets/d/1S2Ov9hMtIm6UrI8uuvuDXNJNiUhbHV6lZ-fM-gu69UE/gviz/tq?tqx=out:csv&sheet=Activity";
-    const VITALS_CSV_URL = "https://docs.google.com/spreadsheets/d/1S2Ov9hMtIm6UrI8uuvuDXNJNiUhbHV6lZ-fM-gu69UE/gviz/tq?tqx=out:csv&sheet=Vitals";
+    const SPREADSHEET_ID = "1S2Ov9hMtIm6UrI8uuvuDXNJNiUhbHV6lZ-fM-gu69UE";
+    const CSV_URL = `https://docs.google.com/spreadsheets/d/${SPREADSHEET_ID}/export?format=csv&gid=0`;
+    const SLEEP_CSV_URL = `https://docs.google.com/spreadsheets/d/${SPREADSHEET_ID}/gviz/tq?tqx=out:csv&sheet=Sleep`;
+    const ACTIVITY_CSV_URL = `https://docs.google.com/spreadsheets/d/${SPREADSHEET_ID}/gviz/tq?tqx=out:csv&sheet=Activity`;
+    const VITALS_CSV_URL = `https://docs.google.com/spreadsheets/d/${SPREADSHEET_ID}/gviz/tq?tqx=out:csv&sheet=Vitals`;
 
     function cleanNum(val) {
       if (val === undefined || val === null || val === '') return null;
@@ -633,10 +634,10 @@
         const timestamp = '&_t=' + new Date().getTime();
         
         const [resDaily, resSleep, resActivity, resVitals] = await Promise.allSettled([
-          fetch(CSV_URL + timestamp).then(r => r.text()),
-          fetch(SLEEP_CSV_URL + timestamp).then(r => r.text()),
-          fetch(ACTIVITY_CSV_URL + timestamp).then(r => r.text()),
-          fetch(VITALS_CSV_URL + timestamp).then(r => r.text())
+          fetch(CSV_URL + timestamp, { cache: 'no-store' }).then(r => r.text()),
+          fetch(SLEEP_CSV_URL + timestamp, { cache: 'no-store' }).then(r => r.text()),
+          fetch(ACTIVITY_CSV_URL + timestamp, { cache: 'no-store' }).then(r => r.text()),
+          fetch(VITALS_CSV_URL + timestamp, { cache: 'no-store' }).then(r => r.text())
         ]);
 
         let dataRows = [];
@@ -1090,6 +1091,8 @@
     }
 
     loadLiveData();
+     // Auto-actualizar cada 60 segundos
+    setInterval(loadLiveData, 60000);
   </script>
 </body>
 </html>
