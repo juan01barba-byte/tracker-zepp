@@ -60,6 +60,32 @@
       gap: 10px;
     }
 
+    .sync-status {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(17, 24, 39, 0.9);
+      border: 1px solid var(--card-border);
+      padding: 7px 14px;
+      border-radius: 999px;
+      font-size: 0.8rem;
+      color: var(--text-muted);
+    }
+
+    .live-dot {
+      width: 8px;
+      height: 8px;
+      background-color: var(--accent-green);
+      border-radius: 50%;
+      box-shadow: 0 0 8px var(--accent-green);
+      animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.35; transform: scale(0.85); }
+    }
+
     .nav-btn {
       background: #111827;
       border: 1px solid var(--card-border);
@@ -261,62 +287,64 @@
         <p style="color: var(--text-muted); font-size: 0.85rem; margin-top: 4px;">Análisis Fisiológico Multinivel · Datos Sincronizados Amazfit Zepp</p>
       </div>
 
-      <!-- Navegación entre las 3 páginas -->
       <nav class="header-nav">
+        <div class="sync-status">
+          <span class="live-dot"></span>
+          <span id="syncStatusText">Sincronizando...</span>
+        </div>
         <a href="index.html" class="nav-btn">
           <span>📊</span> Dashboard
         </a>
         <a href="registros.html" class="nav-btn">
           <span>📋</span> Historial
         </a>
-        <a href="sueño.html" class="nav-btn active">
+        <a href="sueno.html" class="nav-btn active">
           <span>💤</span> Meta-Análisis
         </a>
-        <span class="user-tag">Juan Hurtado (64.3 kg | 1.64 m)</span>
+        <span class="user-tag" id="userHeaderTag">Juan Hurtado (63.46 kg | 1.64 m)</span>
       </nav>
     </header>
 
-    <!-- Banner Diagnóstico Global -->
     <div class="hero-banner">
       <div>
         <div style="font-size: 1.1rem; font-weight: 800; color: #fff;">Diagnóstico Global de Arquitectura del Sueño</div>
-        <div style="font-size: 0.85rem; color: var(--text-muted); margin-top: 4px; max-width: 820px; line-height: 1.5;">
-          Evaluación consolidada de los registros de septiembre: Alta preservación de sueño profundo (17.8%) y tono vagal robusto nocturno (FC media 48 lpm, HRV 101 ms), con patrón de recuperación compensatoria tras noches de restricción académica.
+        <div style="font-size: 0.85rem; color: var(--text-muted); margin-top: 4px; max-width: 820px; line-height: 1.5;" id="heroDiagnosisText">
+          Evaluación consolidada en tiempo real: Alta preservación de sueño profundo y tono vagal robusto nocturno, con patrón de recuperación compensatoria tras noches de restricción académica.
         </div>
       </div>
       <div>
-        <span style="background: rgba(16, 185, 129, 0.15); color: #34d399; border: 1px solid rgba(16, 185, 129, 0.3); padding: 8px 16px; border-radius: 999px; font-weight: 800; font-size: 0.88rem;">
-          Puntuación Global: 84.5 / 100
+        <span style="background: rgba(16, 185, 129, 0.15); color: #34d399; border: 1px solid rgba(16, 185, 129, 0.3); padding: 8px 16px; border-radius: 999px; font-weight: 800; font-size: 0.88rem;" id="globalScoreBadge">
+          Puntuación Global: -- / 100
         </span>
       </div>
     </div>
 
-    <!-- KPIs de Sueño -->
+    <!-- KPIs Dinámicos -->
     <div class="grid-kpis">
       <div class="card">
         <div class="card-title">Duración Promedio</div>
-        <div class="card-value" style="color: var(--accent-blue);">6h 48m</div>
-        <div class="card-subtext">Rango: 3h 51m a 9h 25m / noche</div>
+        <div class="card-value" style="color: var(--accent-blue);" id="kpiAvgDuration">--</div>
+        <div class="card-subtext" id="kpiDurationRange">Calculando rango...</div>
       </div>
       <div class="card">
         <div class="card-title">Sueño Profundo (N3 / SWS)</div>
-        <div class="card-value" style="color: var(--accent-purple);">72.8 <span style="font-size: 1rem;">min</span></div>
-        <div class="card-subtext">17.8% del tiempo total (Meta: >16%)</div>
+        <div class="card-value" style="color: var(--accent-purple);" id="kpiAvgDeep">-- <span style="font-size: 1rem;">min</span></div>
+        <div class="card-subtext" id="kpiDeepPct">Calculando %...</div>
       </div>
       <div class="card">
         <div class="card-title">Fase REM Cognitiva</div>
-        <div class="card-value" style="color: var(--accent-pink);">72.9 <span style="font-size: 1rem;">min</span></div>
-        <div class="card-subtext">17.9% del tiempo total (Meta: >18%)</div>
+        <div class="card-value" style="color: var(--accent-pink);" id="kpiAvgRem">-- <span style="font-size: 1rem;">min</span></div>
+        <div class="card-subtext" id="kpiRemPct">Calculando %...</div>
       </div>
       <div class="card">
         <div class="card-title">FC Reposo Nocturna</div>
-        <div class="card-value" style="color: var(--accent-orange);">48.2 <span style="font-size: 1rem;">lpm</span></div>
-        <div class="card-subtext">Preevento: 46 lpm | HRV medio: 101.4 ms</div>
+        <div class="card-value" style="color: var(--accent-orange);" id="kpiAvgRHR">-- <span style="font-size: 1rem;">lpm</span></div>
+        <div class="card-subtext" id="kpiRhrSub">HRV medio en reposo</div>
       </div>
       <div class="card">
         <div class="card-title">Eficiencia & Continuidad</div>
-        <div class="card-value" style="color: var(--accent-green);">98.8 <span style="font-size: 1rem;">%</span></div>
-        <div class="card-subtext">WASO (despertares): &lt; 1.4 min / noche</div>
+        <div class="card-value" style="color: var(--accent-green);" id="kpiEfficiency">-- <span style="font-size: 1rem;">%</span></div>
+        <div class="card-subtext" id="kpiWasoSub">WASO despertares</div>
       </div>
     </div>
 
@@ -361,12 +389,12 @@
             <h3 class="obs-title">1. Sueño Profundo (NREM 3 / SWS)</h3>
             <span class="obs-badge badge-deep">Óptimo</span>
           </div>
-          <div class="obs-stat" style="color: var(--accent-purple);">
-            72.8 min / noche
+          <div class="obs-stat" style="color: var(--accent-purple);" id="obsDeepStat">
+            -- min / noche
             <span class="obs-benchmark">(Benchmark Zepp: >60 min)</span>
           </div>
-          <p class="obs-desc">
-            Presentas una reserva excelente de ondas lentas delta. Tu pico máximo alcanzó <strong>107 minutos (el 10 de septiembre)</strong> tras una jornada de alta carga. Tu proporción se mantiene consistentemente por encima del 16% del tiempo total de descanso.
+          <p class="obs-desc" id="obsDeepDesc">
+            Calculando reserva de ondas lentas delta a partir de tus registros en vivo de Zepp...
           </p>
         </div>
         <div class="obs-pearl">
@@ -380,12 +408,12 @@
             <h3 class="obs-title">2. Fase REM (Movimientos Oculares Rápidos)</h3>
             <span class="obs-badge badge-rem">Muy Bueno</span>
           </div>
-          <div class="obs-stat" style="color: var(--accent-blue);">
-            72.9 min / noche
+          <div class="obs-stat" style="color: var(--accent-blue);" id="obsRemStat">
+            -- min / noche
             <span class="obs-benchmark">(Benchmark Zepp: 60 - 90 min)</span>
           </div>
-          <p class="obs-desc">
-            Tu sueño paradójico/REM promedia hora y cuarto, alcanzando picos destacados de <strong>97 minutos (09-09)</strong> y <strong>94 minutos (09-07)</strong>. Representa el 17.9% de tu arquitectura de sueño.
+          <p class="obs-desc" id="obsRemDesc">
+            Monitoreando proporción de sueño paradójico/REM y consolidación cognitiva...
           </p>
         </div>
         <div class="obs-pearl">
@@ -399,16 +427,16 @@
             <h3 class="obs-title">3. Tono Cardiovascular Basal & HRV</h3>
             <span class="obs-badge badge-rhr">Excelente</span>
           </div>
-          <div class="obs-stat" style="color: var(--accent-orange);">
-            48.2 lpm | 101.4 ms
+          <div class="obs-stat" style="color: var(--accent-orange);" id="obsVitalsStat">
+            -- lpm | -- ms
             <span class="obs-benchmark">(FC Reposo / HRV)</span>
           </div>
-          <p class="obs-desc">
-            Tu frecuencia cardíaca basal refleja un perfil atlético sobresaliente (bradicardia fisiológica de resistencia), con mínimas de <strong>46 lpm</strong>. La variabilidad de la frecuencia cardíaca (HRV) promedio de 101.4 ms evidencia un fuerte predominio vagal protector.
+          <p class="obs-desc" id="obsVitalsDesc">
+            Analizando frecuencia cardíaca basal nocturna y variabilidad autonómica parasimpática...
           </p>
         </div>
         <div class="obs-pearl">
-          <strong>Sensibilidad Clínica:</strong> En la noche corta del 04 de septiembre, tu HRV cayó abruptamente a <strong>89.8 ms</strong>, demostrando que la privación de sueño eleva de inmediato el tono simpático.
+          <strong>Sensibilidad Clínica:</strong> Una privación aguda de sueño o una sobrecarga simpática produce caídas inmediatas en el HRV y elevación proporcional de la frecuencia cardíaca al despertar.
         </div>
       </div>
 
@@ -418,12 +446,12 @@
             <h3 class="obs-title">4. Continuidad y Microdespertares (WASO)</h3>
             <span class="obs-badge badge-efficiency">Sobresaliente</span>
           </div>
-          <div class="obs-stat" style="color: var(--accent-green);">
-            98.8% Eficiencia
-            <span class="obs-benchmark">(WASO medio: 1.1 min)</span>
+          <div class="obs-stat" style="color: var(--accent-green);" id="obsEfficiencyStat">
+            --% Eficiencia
+            <span class="obs-benchmark">(WASO medio: -- min)</span>
           </div>
           <p class="obs-desc">
-            Prácticamente no experimentas fragmentación del sueño. Tus despertares oscilan entre 0 y 2 minutos en toda la noche. El índice de apnea / desaturación se descarta con tu $SpO_2$ nocturno promedio de <strong>97.8%</strong>.
+            Evaluando despertares nocturnos y estabilidad circadiana a través de los sensores del Amazfit Bip.
           </p>
         </div>
         <div class="obs-pearl">
@@ -437,110 +465,380 @@
             <h3 class="obs-title">5. Regularidad y Deuda Aguda de Sueño</h3>
             <span class="obs-badge badge-circadian">Ajustable</span>
           </div>
-          <div class="obs-stat" style="color: var(--accent-pink);">
-            Variabilidad: 5.5 h
+          <div class="obs-stat" style="color: var(--accent-pink);" id="obsCircadianStat">
+            Variabilidad: -- h
             <span class="obs-benchmark">(Diferencia mín-máx)</span>
           </div>
           <p class="obs-desc">
-            Tu hora habitual de inicio de sueño se ubica entre la <strong>01:00 y las 02:45 a. m.</strong> Se evidencia el fenómeno de <em>sueño de rebote</em> (noches de 9h 25m y 8h 08m compensando noches cortas de estudio de 3h 51m).
+            Monitoreando ventanas horarias de inicio de sueño y presencia de episodios de sueño compensatorio o de rebote.
           </p>
         </div>
         <div class="obs-pearl">
-          <strong>Recomendación:</strong> Adelantar progresivamente la hora de acostarse a las 12:30 a. m. estabilizará la secreción de melatonina y mitigará picos de cortisol en días de déficit calórico.
+          <strong>Recomendación:</strong> Adelantar progresivamente la hora de acostarse estabilizará la secreción de melatonina y mitigará picos de cortisol en días de déficit calórico.
         </div>
       </div>
     </div>
   </div>
 
   <script>
-    const fechas = ['09-02', '09-03', '09-04', '09-05', '09-07', '09-08', '09-09', '09-10', '09-11', '09-27'];
+    const SPREADSHEET_ID = "1S2Ov9hMtIm6UrI8uuvuDXNJNiUhbHV6lZ-fM-gu69UE";
+    const SLEEP_CSV_URL = `https://docs.google.com/spreadsheets/d/${SPREADSHEET_ID}/gviz/tq?tqx=out:csv&sheet=Sleep`;
+    const VITALS_CSV_URL = `https://docs.google.com/spreadsheets/d/${SPREADSHEET_ID}/gviz/tq?tqx=out:csv&sheet=Vitals`;
+    const DAILY_CSV_URL = `https://docs.google.com/spreadsheets/d/${SPREADSHEET_ID}/export?format=csv&gid=0`;
 
-    // GRÁFICA 1: Fases y Score
-    const ctxPhases = document.getElementById('phasesTrendChart').getContext('2d');
-    new Chart(ctxPhases, {
-      type: 'bar',
-      data: {
-        labels: fechas,
-        datasets: [
-          { label: 'Sueño Profundo (min)', data: [66, 76, 35, 44, 80, 79, 58, 107, 75, 75], backgroundColor: '#a855f7', yAxisID: 'yMinutos' },
-          { label: 'Sueño REM (min)', data: [57, 52, 53, 86, 94, 53, 97, 83, 71, 65], backgroundColor: '#38bdf8', yAxisID: 'yMinutos' },
-          { label: 'Sueño Ligero (min)', data: [237, 276, 143, 203, 314, 218, 221, 374, 322, 270], backgroundColor: '#334155', yAxisID: 'yMinutos' },
-          { label: 'Puntuación Zepp', data: [81, 83, 62, 74, 88, 80, 85, 93, 89, 82], type: 'line', borderColor: '#f97316', backgroundColor: 'transparent', borderWidth: 2.5, pointRadius: 4, yAxisID: 'yScore' }
-        ]
-      },
-      options: {
-        responsive: true,
-        maintainAspectRatio: false,
-        plugins: {
-          legend: { labels: { color: '#9ca3af', font: { family: 'Plus Jakarta Sans', size: 11 } } },
-          tooltip: {
-            callbacks: {
-              footer: (items) => {
-                let totalMin = 0;
-                items.forEach(i => { if (i.dataset.type !== 'line') totalMin += i.raw; });
-                return totalMin > 0 ? 'Total descanso: ' + Math.floor(totalMin / 60) + 'h ' + (totalMin % 60) + 'm' : '';
-              }
+    let phasesTrendChart = null;
+    let sleepRadarChart = null;
+    let correlationChart = null;
+
+    function cleanNum(val) {
+      if (val === undefined || val === null || val === '') return null;
+      let s = val.toString().replace(/,/g, '.').replace(/[^0-9.-]/g, '');
+      let n = parseFloat(s);
+      return isNaN(n) ? null : n;
+    }
+
+    function parseCSV(text) {
+      const lines = text.trim().split(/\r?\n/);
+      return lines.map(line => {
+        const row = [];
+        let inQuotes = false;
+        let entry = '';
+        for (let i = 0; i < line.length; i++) {
+          const c = line[i];
+          if (c === '"') {
+            inQuotes = !inQuotes;
+          } else if (c === ',' && !inQuotes) {
+            row.push(entry.trim());
+            entry = '';
+          } else {
+            entry += c;
+          }
+        }
+        row.push(entry.trim());
+        return row;
+      });
+    }
+
+    async function syncSleepData() {
+      try {
+        const timestamp = '&_t=' + Date.now();
+        const [resSleep, resVitals, resDaily] = await Promise.allSettled([
+          fetch(SLEEP_CSV_URL + timestamp, { cache: 'no-store' }).then(r => r.text()),
+          fetch(VITALS_CSV_URL + timestamp, { cache: 'no-store' }).then(r => r.text()),
+          fetch(DAILY_CSV_URL + timestamp, { cache: 'no-store' }).then(r => r.text())
+        ]);
+
+        const sleepMap = {};
+        if (resSleep.status === 'fulfilled') {
+          const sleepRows = parseCSV(resSleep.value);
+          const seenSessions = new Set();
+          for (let i = 1; i < sleepRows.length; i++) {
+            const sr = sleepRows[i];
+            if (!sr || sr.length < 8) continue;
+            const dateStr = sr[0];
+            const startTime = sr[3];
+            if (!dateStr || !/^\d{4}-\d{2}-\d{2}$/.test(dateStr)) continue;
+
+            const sessionKey = dateStr + '_' + (startTime || '');
+            if (seenSessions.has(sessionKey)) continue;
+            seenSessions.add(sessionKey);
+
+            const light = cleanNum(sr[5]) || 0;
+            const deep = cleanNum(sr[6]) || 0;
+            const rem = cleanNum(sr[7]) || 0;
+            const awake = cleanNum(sr[8]) || 0;
+
+            if (!sleepMap[dateStr]) {
+              sleepMap[dateStr] = { deep: 0, rem: 0, light: 0, awake: 0 };
+            }
+            sleepMap[dateStr].deep += deep;
+            sleepMap[dateStr].rem += rem;
+            sleepMap[dateStr].light += light;
+            sleepMap[dateStr].awake += awake;
+          }
+        }
+
+        const vitalsMap = {};
+        if (resVitals.status === 'fulfilled') {
+          const vitRows = parseCSV(resVitals.value);
+          for (let i = 1; i < vitRows.length; i++) {
+            const vr = vitRows[i];
+            if (!vr || vr.length < 18) continue;
+            const dateStr = vr[0];
+            const hrv = cleanNum(vr[8]);
+            const rhr = cleanNum(vr[17]);
+            if (!dateStr || !/^\d{4}-\d{2}-\d{2}$/.test(dateStr)) continue;
+            if (!vitalsMap[dateStr] || (rhr !== null && rhr > 0)) {
+              vitalsMap[dateStr] = { rhr: rhr, hrv: hrv };
             }
           }
-        },
-        scales: {
-          x: { stacked: true, grid: { color: 'rgba(255, 255, 255, 0.05)' }, ticks: { color: '#9ca3af' } },
-          yMinutos: { stacked: true, position: 'left', grid: { color: 'rgba(255, 255, 255, 0.05)' }, ticks: { color: '#9ca3af' }, title: { display: true, text: 'Minutos', color: '#9ca3af' } },
-          yScore: { position: 'right', min: 50, max: 100, grid: { drawOnChartArea: false }, ticks: { color: '#f97316' }, title: { display: true, text: 'Score Zepp', color: '#f97316' } }
         }
-      }
-    });
 
-    // GRÁFICA 2: Radar de Dimensiones Zepp
-    const ctxRadar = document.getElementById('sleepRadarChart').getContext('2d');
-    new Chart(ctxRadar, {
-      type: 'radar',
-      data: {
-        labels: ['Duración Total', 'Sueño Profundo', 'Fase REM', 'Continuidad / WASO', 'Regularidad Circadiana', 'Recuperación FC/HRV'],
-        datasets: [
-          { label: 'Tu Perfil (Septiembre)', data: [78, 92, 85, 98, 70, 95], borderColor: '#a855f7', backgroundColor: 'rgba(168, 85, 247, 0.25)', borderWidth: 2, pointBackgroundColor: '#a855f7' },
-          { label: 'Benchmark Óptimo', data: [85, 85, 85, 90, 85, 85], borderColor: '#38bdf8', backgroundColor: 'rgba(56, 189, 248, 0.08)', borderWidth: 1.5, borderDash: [4, 4], pointBackgroundColor: '#38bdf8' }
-        ]
-      },
-      options: {
-        responsive: true,
-        maintainAspectRatio: false,
-        plugins: { legend: { labels: { color: '#9ca3af', font: { family: 'Plus Jakarta Sans', size: 10 } } } },
-        scales: {
-          r: {
-            angleLines: { color: 'rgba(255, 255, 255, 0.1)' },
-            grid: { color: 'rgba(255, 255, 255, 0.08)' },
-            pointLabels: { color: '#cbd5e1', font: { family: 'Plus Jakarta Sans', size: 10, weight: 600 } },
-            ticks: { display: false, min: 0, max: 100 }
+        const dailyScores = {};
+        let latestWeight = 63.46;
+        if (resDaily.status === 'fulfilled') {
+          const dailyRows = parseCSV(resDaily.value);
+          for (let i = 1; i < dailyRows.length; i++) {
+            const dr = dailyRows[i];
+            if (dr && dr[0] && /^\d{4}-\d{2}-\d{2}$/.test(dr[0])) {
+              const sc = cleanNum(dr[10]);
+              if (sc !== null) dailyScores[dr[0]] = sc;
+              const w = cleanNum(dr[1]);
+              if (w !== null && w > 0) latestWeight = w;
+            }
           }
         }
-      }
-    });
 
-    // GRÁFICA 3: Correlación Fisiológica
-    const ctxCorrelation = document.getElementById('correlationChart').getContext('2d');
-    new Chart(ctxCorrelation, {
-      type: 'line',
-      data: {
-        labels: fechas,
-        datasets: [
-          { label: 'Sueño Profundo (min)', data: [66, 76, 35, 44, 80, 79, 58, 107, 75, 75], borderColor: '#a855f7', backgroundColor: 'rgba(168, 85, 247, 0.12)', tension: 0.35, yAxisID: 'yProfundo', fill: true, pointRadius: 4 },
-          { label: 'HRV Promedio (ms)', data: [107.5, 100.3, 89.8, 94.2, 98.0, 102.1, 95.4, 105.0, 110.2, 106.0], borderColor: '#ec4899', backgroundColor: 'transparent', tension: 0.35, yAxisID: 'yHRV', pointRadius: 4 },
-          { label: 'FC en Reposo (lpm)', data: [50, 47, 48, 52, 48, 50, 47, 46, 48, 48], borderColor: '#f97316', backgroundColor: 'transparent', borderDash: [5, 4], tension: 0.3, yAxisID: 'yFC', pointRadius: 4 }
-        ]
-      },
-      options: {
-        responsive: true,
-        maintainAspectRatio: false,
-        plugins: { legend: { labels: { color: '#9ca3af', font: { family: 'Plus Jakarta Sans', size: 11 } } } },
-        scales: {
-          x: { grid: { color: 'rgba(255, 255, 255, 0.05)' }, ticks: { color: '#9ca3af' } },
-          yProfundo: { type: 'linear', position: 'left', min: 20, max: 120, grid: { color: 'rgba(255, 255, 255, 0.05)' }, ticks: { color: '#a855f7' }, title: { display: true, text: 'Sueño Profundo (min)', color: '#a855f7' } },
-          yHRV: { type: 'linear', position: 'right', min: 75, max: 125, grid: { drawOnChartArea: false }, ticks: { color: '#ec4899' }, title: { display: true, text: 'HRV (ms)', color: '#ec4899' } },
-          yFC: { type: 'linear', position: 'right', min: 40, max: 60, grid: { drawOnChartArea: false }, ticks: { color: '#f97316' }, title: { display: true, text: 'FC Reposo (lpm)', color: '#f97316' } }
+        const userTag = document.getElementById('userHeaderTag');
+        if (userTag) userTag.textContent = `Juan Hurtado (${latestWeight.toFixed(2)} kg | 1.64 m)`;
+
+        renderSleepAnalytics(sleepMap, vitalsMap, dailyScores);
+
+        const now = new Date();
+        const timeStr = now.toLocaleTimeString('es-PA', { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: true });
+        const syncText = document.getElementById('syncStatusText');
+        if (syncText) syncText.textContent = `En vivo · ${timeStr}`;
+      } catch (err) {
+        console.error('Error sincronizando meta-análisis:', err);
+        const syncText = document.getElementById('syncStatusText');
+        if (syncText) syncText.textContent = 'Error de conexión';
+      }
+    }
+
+    function renderSleepAnalytics(sleepMap, vitalsMap, dailyScores) {
+      const dates = Object.keys(sleepMap).sort();
+      if (dates.length === 0) return;
+
+      let sumTotalMin = 0, sumDeep = 0, sumRem = 0, sumAwake = 0, count = 0;
+      let minDuration = Infinity, maxDuration = -Infinity;
+      let maxDeep = 0, maxDeepDate = '';
+
+      dates.forEach(d => {
+        const s = sleepMap[d];
+        const tot = s.deep + s.rem + s.light;
+        if (tot > 60) {
+          sumTotalMin += tot;
+          sumDeep += s.deep;
+          sumRem += s.rem;
+          sumAwake += s.awake;
+          count++;
+          if (tot < minDuration) minDuration = tot;
+          if (tot > maxDuration) maxDuration = tot;
+          if (s.deep > maxDeep) {
+            maxDeep = s.deep;
+            maxDeepDate = d;
+          }
+        }
+      });
+
+      let avgTot = 408, avgDeep = 72.8, avgRem = 72.9, avgAwake = 1.1;
+
+      if (count > 0) {
+        avgTot = sumTotalMin / count;
+        avgDeep = sumDeep / count;
+        avgRem = sumRem / count;
+        avgAwake = sumAwake / count;
+
+        const durH = Math.floor(avgTot / 60);
+        const durM = Math.round(avgTot % 60);
+        const elDur = document.getElementById('kpiAvgDuration');
+        if (elDur) elDur.textContent = `${durH}h ${durM}m`;
+
+        const minH = Math.floor(minDuration / 60), minM = Math.round(minDuration % 60);
+        const maxH = Math.floor(maxDuration / 60), maxM = Math.round(maxDuration % 60);
+        const elRange = document.getElementById('kpiDurationRange');
+        if (elRange) elRange.textContent = `Rango: ${minH}h ${minM}m a ${maxH}h ${maxM}m / noche`;
+
+        const elDeep = document.getElementById('kpiAvgDeep');
+        if (elDeep) elDeep.innerHTML = `${avgDeep.toFixed(1)} <span style="font-size: 1rem;">min</span>`;
+        const elDeepPct = document.getElementById('kpiDeepPct');
+        if (elDeepPct) elDeepPct.textContent = `${((avgDeep / avgTot) * 100).toFixed(1)}% del tiempo total (Meta: >16%)`;
+
+        const elRem = document.getElementById('kpiAvgRem');
+        if (elRem) elRem.innerHTML = `${avgRem.toFixed(1)} <span style="font-size: 1rem;">min</span>`;
+        const elRemPct = document.getElementById('kpiRemPct');
+        if (elRemPct) elRemPct.textContent = `${((avgRem / avgTot) * 100).toFixed(1)}% del tiempo total (Meta: >18%)`;
+
+        const efficiency = Math.max(90, Math.min(99.5, 100 - (avgAwake / avgTot) * 100)).toFixed(1);
+        const elEff = document.getElementById('kpiEfficiency');
+        if (elEff) elEff.innerHTML = `${efficiency} <span style="font-size: 1rem;">%</span>`;
+        const elWaso = document.getElementById('kpiWasoSub');
+        if (elWaso) elWaso.textContent = `WASO (despertares): < ${avgAwake.toFixed(1)} min / noche`;
+
+        const diffH = ((maxDuration - minDuration) / 60).toFixed(1);
+        const elCirc = document.getElementById('obsCircadianStat');
+        if (elCirc) elCirc.innerHTML = `Variabilidad: ${diffH} h <span class="obs-benchmark">(Diferencia mín-máx)</span>`;
+
+        const elDeepStat = document.getElementById('obsDeepStat');
+        if (elDeepStat) elDeepStat.innerHTML = `${avgDeep.toFixed(1)} min / noche <span class="obs-benchmark">(Benchmark Zepp: >60 min)</span>`;
+        const elDeepDesc = document.getElementById('obsDeepDesc');
+        if (elDeepDesc) {
+          elDeepDesc.innerHTML = `Presentas una reserva excelente de ondas lentas delta. Tu pico máximo alcanzó <strong>${maxDeep} minutos (${maxDeepDate ? maxDeepDate.slice(5) : ''})</strong> tras jornadas de alta carga. Proporción media del <strong>${((avgDeep / avgTot) * 100).toFixed(1)}%</strong>.`;
+        }
+
+        const elRemStat = document.getElementById('obsRemStat');
+        if (elRemStat) elRemStat.innerHTML = `${avgRem.toFixed(1)} min / noche <span class="obs-benchmark">(Benchmark Zepp: 60 - 90 min)</span>`;
+        const elRemDesc = document.getElementById('obsRemDesc');
+        if (elRemDesc) {
+          elRemDesc.innerHTML = `Tu fase REM promedia ${Math.floor(avgRem / 60)}h ${Math.round(avgRem % 60)}m por noche, representando el <strong>${((avgRem / avgTot) * 100).toFixed(1)}%</strong> de la arquitectura de sueño.`;
+        }
+
+        const elEffStat = document.getElementById('obsEfficiencyStat');
+        if (elEffStat) elEffStat.innerHTML = `${efficiency}% Eficiencia <span class="obs-benchmark">(WASO medio: ${avgAwake.toFixed(1)} min)</span>`;
+      }
+
+      // Vitals
+      const vitDates = Object.keys(vitalsMap);
+      let sumRhr = 0, sumHrv = 0, vCount = 0;
+      vitDates.forEach(d => {
+        if (vitalsMap[d].rhr) {
+          sumRhr += vitalsMap[d].rhr;
+          sumHrv += (vitalsMap[d].hrv || 101.4);
+          vCount++;
+        }
+      });
+
+      let avgRhr = 48.2, avgHrv = 101.4;
+      if (vCount > 0) {
+        avgRhr = Number((sumRhr / vCount).toFixed(1));
+        avgHrv = Number((sumHrv / vCount).toFixed(1));
+        const elRhr = document.getElementById('kpiAvgRHR');
+        if (elRhr) elRhr.innerHTML = `${avgRhr} <span style="font-size: 1rem;">lpm</span>`;
+        const elRhrSub = document.getElementById('kpiRhrSub');
+        if (elRhrSub) elRhrSub.textContent = `HRV medio: ${avgHrv} ms`;
+
+        const elVitStat = document.getElementById('obsVitalsStat');
+        if (elVitStat) elVitStat.innerHTML = `${avgRhr} lpm | ${avgHrv} ms <span class="obs-benchmark">(FC Reposo / HRV)</span>`;
+        const elVitDesc = document.getElementById('obsVitalsDesc');
+        if (elVitDesc) {
+          elVitDesc.innerHTML = `Frecuencia basal nocturna atlética promedio de <strong>${avgRhr} lpm</strong>. HRV medio de <strong>${avgHrv} ms</strong> confirmando tono parasimpático recuperador.`;
         }
       }
-    });
+
+      // Global score
+      const globalScore = Math.min(100, Math.round(70 + (avgDeep / 90) * 15 + (avgRem / 90) * 10 + (avgHrv > 95 ? 5 : 0)));
+      const scoreBadge = document.getElementById('globalScoreBadge');
+      if (scoreBadge) scoreBadge.textContent = `Puntuación Global: ${globalScore} / 100`;
+
+      // Series para gráficas
+      const targetDates = dates.slice(-12);
+      const labels = targetDates.map(d => d.slice(5));
+      const deepData = targetDates.map(d => sleepMap[d].deep);
+      const remData = targetDates.map(d => sleepMap[d].rem);
+      const lightData = targetDates.map(d => sleepMap[d].light);
+      const scoreData = targetDates.map(d => {
+        if (dailyScores[d]) return dailyScores[d];
+        const s = sleepMap[d];
+        return Math.min(100, Math.round(70 + (s.deep / 120) * 20 + (s.rem / 100) * 10));
+      });
+
+      // Gráfica 1: Fases de Sueño
+      const ctxPhases = document.getElementById('phasesTrendChart').getContext('2d');
+      if (phasesTrendChart) phasesTrendChart.destroy();
+      phasesTrendChart = new Chart(ctxPhases, {
+        type: 'bar',
+        data: {
+          labels: labels,
+          datasets: [
+            { label: 'Sueño Profundo (min)', data: deepData, backgroundColor: '#a855f7', yAxisID: 'yMinutos' },
+            { label: 'Sueño REM (min)', data: remData, backgroundColor: '#38bdf8', yAxisID: 'yMinutos' },
+            { label: 'Sueño Ligero (min)', data: lightData, backgroundColor: '#334155', yAxisID: 'yMinutos' },
+            { label: 'Puntuación Zepp', data: scoreData, type: 'line', borderColor: '#f97316', backgroundColor: 'transparent', borderWidth: 2.5, pointRadius: 4, yAxisID: 'yScore' }
+          ]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: { labels: { color: '#9ca3af', font: { family: 'Plus Jakarta Sans', size: 11 } } },
+            tooltip: {
+              callbacks: {
+                footer: (items) => {
+                  let totalMin = 0;
+                  items.forEach(i => { if (i.dataset.type !== 'line') totalMin += i.raw; });
+                  return totalMin > 0 ? 'Total descanso: ' + Math.floor(totalMin / 60) + 'h ' + (totalMin % 60) + 'm' : '';
+                }
+              }
+            }
+          },
+          scales: {
+            x: { stacked: true, grid: { color: 'rgba(255, 255, 255, 0.05)' }, ticks: { color: '#9ca3af' } },
+            yMinutos: { stacked: true, position: 'left', grid: { color: 'rgba(255, 255, 255, 0.05)' }, ticks: { color: '#9ca3af' }, title: { display: true, text: 'Minutos', color: '#9ca3af' } },
+            yScore: { position: 'right', min: 50, max: 100, grid: { drawOnChartArea: false }, ticks: { color: '#f97316' }, title: { display: true, text: 'Score Zepp', color: '#f97316' } }
+          }
+        }
+      });
+
+      // Gráfica 2: Radar Dinámico
+      const radarProfile = [
+        Math.min(100, Math.round((avgTot / 480) * 85)),
+        Math.min(100, Math.round((avgDeep / 75) * 90)),
+        Math.min(100, Math.round((avgRem / 75) * 85)),
+        Math.min(100, Math.round(Number(document.getElementById('kpiEfficiency').innerText.replace('%', '')) || 98)),
+        72,
+        Math.min(100, Math.round((avgHrv / 105) * 95))
+      ];
+
+      const ctxRadar = document.getElementById('sleepRadarChart').getContext('2d');
+      if (sleepRadarChart) sleepRadarChart.destroy();
+      sleepRadarChart = new Chart(ctxRadar, {
+        type: 'radar',
+        data: {
+          labels: ['Duración Total', 'Sueño Profundo', 'Fase REM', 'Continuidad / WASO', 'Regularidad Circadiana', 'Recuperación FC/HRV'],
+          datasets: [
+            { label: 'Tu Perfil Actual', data: radarProfile, borderColor: '#a855f7', backgroundColor: 'rgba(168, 85, 247, 0.25)', borderWidth: 2, pointBackgroundColor: '#a855f7' },
+            { label: 'Benchmark Óptimo', data: [85, 85, 85, 90, 85, 85], borderColor: '#38bdf8', backgroundColor: 'rgba(56, 189, 248, 0.08)', borderWidth: 1.5, borderDash: [4, 4], pointBackgroundColor: '#38bdf8' }
+          ]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: { legend: { labels: { color: '#9ca3af', font: { family: 'Plus Jakarta Sans', size: 10 } } } },
+          scales: {
+            r: {
+              angleLines: { color: 'rgba(255, 255, 255, 0.1)' },
+              grid: { color: 'rgba(255, 255, 255, 0.08)' },
+              pointLabels: { color: '#cbd5e1', font: { family: 'Plus Jakarta Sans', size: 10, weight: 600 } },
+              ticks: { display: false, min: 0, max: 100 }
+            }
+          }
+        }
+      });
+
+      // Gráfica 3: Correlación Fisiológica
+      const hrvSeries = targetDates.map(d => vitalsMap[d] && vitalsMap[d].hrv ? vitalsMap[d].hrv : avgHrv);
+      const rhrSeries = targetDates.map(d => vitalsMap[d] && vitalsMap[d].rhr ? vitalsMap[d].rhr : avgRhr);
+
+      const ctxCorrelation = document.getElementById('correlationChart').getContext('2d');
+      if (correlationChart) correlationChart.destroy();
+      correlationChart = new Chart(ctxCorrelation, {
+        type: 'line',
+        data: {
+          labels: labels,
+          datasets: [
+            { label: 'Sueño Profundo (min)', data: deepData, borderColor: '#a855f7', backgroundColor: 'rgba(168, 85, 247, 0.12)', tension: 0.35, yAxisID: 'yProfundo', fill: true, pointRadius: 4 },
+            { label: 'HRV Promedio (ms)', data: hrvSeries, borderColor: '#ec4899', backgroundColor: 'transparent', tension: 0.35, yAxisID: 'yHRV', pointRadius: 4 },
+            { label: 'FC en Reposo (lpm)', data: rhrSeries, borderColor: '#f97316', backgroundColor: 'transparent', borderDash: [5, 4], tension: 0.3, yAxisID: 'yFC', pointRadius: 4 }
+          ]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: { legend: { labels: { color: '#9ca3af', font: { family: 'Plus Jakarta Sans', size: 11 } } } },
+          scales: {
+            x: { grid: { color: 'rgba(255, 255, 255, 0.05)' }, ticks: { color: '#9ca3af' } },
+            yProfundo: { type: 'linear', position: 'left', min: 20, max: 120, grid: { color: 'rgba(255, 255, 255, 0.05)' }, ticks: { color: '#a855f7' }, title: { display: true, text: 'Sueño Profundo (min)', color: '#a855f7' } },
+            yHRV: { type: 'linear', position: 'right', min: 70, max: 130, grid: { drawOnChartArea: false }, ticks: { color: '#ec4899' }, title: { display: true, text: 'HRV (ms)', color: '#ec4899' } },
+            yFC: { type: 'linear', position: 'right', min: 40, max: 60, grid: { drawOnChartArea: false }, ticks: { color: '#f97316' }, title: { display: true, text: 'FC Reposo (lpm)', color: '#f97316' } }
+          }
+        }
+      });
+    }
+
+    // Ejecución inicial y refresco cada 60s
+    syncSleepData();
+    setInterval(syncSleepData, 60000);
   </script>
 </body>
 </html>
+
