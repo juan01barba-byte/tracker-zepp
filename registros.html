@@ -272,7 +272,6 @@
     </header>
 
     <div class="card">
-      <!-- Filter and Search Bar -->
       <div class="filter-bar">
         <div class="category-pills">
           <button class="pill-btn active" onclick="filterRecords('ALL', this)">
@@ -303,7 +302,6 @@
         </div>
       </div>
 
-      <!-- Table of Classified Records -->
       <div class="table-responsive">
         <table class="records-table">
           <thead>
@@ -329,8 +327,9 @@
 
   <script>
     const SPREADSHEET_ID = "1S2Ov9hMtIm6UrI8uuvuDXNJNiUhbHV6lZ-fM-gu69UE";
-    // Usamos el endpoint gviz oficial que no sufre de restricciones de CORS en llamadas fetch directas
     const CSV_URL = `https://docs.google.com/spreadsheets/d/${SPREADSHEET_ID}/gviz/tq?tqx=out:csv&sheet=Registro%20Diario`;
+    const ACTIVITY_CSV_URL = `https://docs.google.com/spreadsheets/d/${SPREADSHEET_ID}/gviz/tq?tqx=out:csv&sheet=Activity`;
+    const VITALS_CSV_URL = `https://docs.google.com/spreadsheets/d/${SPREADSHEET_ID}/gviz/tq?tqx=out:csv&sheet=Vitals`;
 
     function cleanNum(val) {
       if (val === undefined || val === null || val === '') return null;
@@ -370,12 +369,15 @@
     async function fetchLiveData() {
       try {
         const noCacheUrl = CSV_URL + '&_t=' + Date.now();
-        const response = await fetch(noCacheUrl, { cache: 'no-store' });
-        if (!response.ok) throw new Error(`HTTP ${response.status}`);
-        
-        const text = await response.text();
+        const [resDaily, resAct, resVit] = await Promise.allSettled([
+          fetch(noCacheUrl, { cache: 'no-store' }).then(r => r.text()),
+          fetch(ACTIVITY_CSV_URL + '&_t=' + Date.now(), { cache: 'no-store' }).then(r => r.text()),
+          fetch(VITALS_CSV_URL + '&_t=' + Date.now(), { cache: 'no-store' }).then(r => r.text())
+        ]);
 
-        // Evitar re-render si no hay cambios en el Sheet
+        if (resDaily.status !== 'fulfilled') throw new Error('Error al conectar con Registro Diario');
+        const text = resDaily.value;
+
         if (text === lastLoadedRawData && rawRecords.length > 0) {
           updateSyncIndicator();
           return;
@@ -385,35 +387,95 @@
         const rows = parseCSV(text);
         const parsed = [];
 
-        // Mapeo columnas Sheet 'Registro Diario':
-        // 0:Fecha, 1:Peso (kg), 2:Promedio Móvil, 3:Cal In, 4:Cal Out, 5:Neto, 6:Deficit, 7:Pasos, 8:Agua, 9:Notas, 10:Score, 11:Horas, 12:Profundo, 13:FC, 14:Prot, 15:Carbs, 16:Grasas
+        // Leer datos complementarios de Activity para pasos que no estén en la hoja diaria
+        const actMap = {};
+        if (resAct.status === 'fulfilled') {
+          const aRows = parseCSV(resAct.value);
+          for (let i = 1; i < aRows.length; i++) {
+            const ar = aRows[i];
+            if (ar && ar[0] && ar[4]) {
+              const d = ar[0].trim();
+              const st = cleanNum(ar[4]); // En Activity, tras insertar Time, Steps está en índice 4
+              if (st && (!actMap[d] || st > actMap[d])) actMap[d] = st;
+            }
+          }
+        }
+
+        // Leer datos complementarios de Vitals para FC / HRV
+        const vitMap = {};
+        if (resVit.status === 'fulfilled') {
+          const vRows = parseCSV(resVit.value);
+          for (let i = 1; i < vRows.length; i++) {
+            const vr = vRows[i];
+            if (vr && vr[0]) {
+              const d = vr[0].trim();
+              const fc = cleanNum(vr[18]); // Resting Heart Rate
+              const hrv = cleanNum(vr[9]);  // HRV
+              if (fc && (!vitMap[d] || fc > 0)) vitMap[d] = { fc, hrv };
+            }
+          }
+        }
+
+        // MAPEO CORREGIDO TRAS INSERTAR COLUMNA B ("Hora / Timestamp"):
+        // 0: Fecha
+        // 1: Hora / Timestamp
+        // 2: Peso (kg)
+        // 3: Promedio Móvil Peso
+        // 4: Calorías Consumidas (kcal)
+        // 5: Calorías Quemadas / TDEE
+        // 6: Balance Neto Diario
+        // 7: Déficit Logrado
+        // 8: Pasos diarios
+        // 9: Agua (L)
+        // 10: Notas / Observaciones
+        // 11: Puntuación de Sueño (Zepp)
+        // 12: Horas de Sueño
+        // 13: Sueño Profundo (min)
+        // 14: Frecuencia Cardíaca en Reposo (lpm)
+        // 15: Proteínas (g)
+        // 16: Carbohidratos (g)
+        // 17: Grasas (g)
         for (let i = 0; i < rows.length; i++) {
           const r = rows[i];
           if (!r || r.length < 2) continue;
           const fecha = (r[0] || '').trim();
           if (!fecha || fecha.toLowerCase().includes('fecha') || !/\d/.test(fecha)) continue;
 
-          const peso = cleanNum(r[1]);
-          const promPeso = cleanNum(r[2]);
-          const calIn = cleanNum(r[3]);
-          const calOut = cleanNum(r[4]);
-          const deficit = cleanNum(r[6]);
-          const pasos = cleanNum(r[7]);
-          const notas = r[9] || '';
-          const score = cleanNum(r[10]);
-          const horas = r[11] || '';
-          const profundo = cleanNum(r[12]);
-          const fc = cleanNum(r[13]);
-          const prot = cleanNum(r[14]);
-          const carbs = cleanNum(r[15]);
-          const grasas = cleanNum(r[16]);
+          const hora = (r[1] || '').trim();
+          const displayDate = hora ? `${fecha} ${hora}` : fecha;
+
+          const peso = cleanNum(r[2]);
+          const promPeso = cleanNum(r[3]);
+          const calIn = cleanNum(r[4]);
+          const calOut = cleanNum(r[5]);
+          const balance = cleanNum(r[6]);
+          const deficit = cleanNum(r[7]);
+          let pasos = cleanNum(r[8]);
+          if ((!pasos || pasos === 0) && actMap[fecha]) pasos = actMap[fecha];
+
+          const notas = r[10] || '';
+          const score = cleanNum(r[11]);
+          const horas = (r[12] || '').trim();
+          const profundo = cleanNum(r[13]);
+          
+          let fc = cleanNum(r[14]);
+          let hrvVal = 105;
+          if ((!fc || fc === 0) && vitMap[fecha]) {
+            fc = vitMap[fecha].fc;
+            if (vitMap[fecha].hrv) hrvVal = Math.round(vitMap[fecha].hrv);
+          }
+
+          const prot = cleanNum(r[15]);
+          const carbs = cleanNum(r[16]);
+          const grasas = cleanNum(r[17]);
 
           // 1. Registro de Composición / Peso
           if (peso !== null && peso > 0) {
             const lbs = (peso * 2.20462).toFixed(1);
             let secText = promPeso ? `Promedio Móvil: ${promPeso.toFixed(2)} kg` : 'Medición ponderal registrada';
             parsed.push({
-              date: fecha,
+              date: displayDate,
+              rawDate: fecha,
               type: 'WEIGHT',
               badge: 'badge-weight',
               typeLabel: '⚖️ Peso',
@@ -426,10 +488,15 @@
           // 2. Registro de Nutrición & Balance Diario
           if (calIn !== null || prot !== null || carbs !== null || grasas !== null) {
             let pStr = calIn !== null ? `${calIn} kcal ingeridas` : '';
-            if (deficit !== null) pStr += ` | Déficit: ${deficit > 0 ? '-' + deficit : Math.abs(deficit)} kcal`;
+            if (deficit !== null) {
+              pStr += ` | Déficit: ${deficit > 0 ? '-' + deficit : Math.abs(deficit)} kcal`;
+            } else if (balance !== null) {
+              pStr += ` | Balance: ${balance} kcal`;
+            }
             let macroStr = `Macros: ${prot ? Math.round(prot) : 0}g P | ${carbs ? Math.round(carbs) : 0}g C | ${grasas ? Math.round(grasas) : 0}g G`;
             parsed.push({
-              date: fecha,
+              date: displayDate,
+              rawDate: fecha,
               type: 'NUTRITION',
               badge: 'badge-nutrition',
               typeLabel: '🥗 Nutrición',
@@ -444,7 +511,8 @@
             const metaCumplida = pasos >= 10000 ? ' (Meta cumplida 🎉)' : '';
             const tdeeStr = calOut ? `Gasto TDEE: ${calOut} kcal` : `Distancia: ${(pasos * 0.00075).toFixed(1)} km`;
             parsed.push({
-              date: fecha,
+              date: displayDate,
+              rawDate: fecha,
               type: 'ACTIVITY',
               badge: 'badge-activity',
               typeLabel: '🏃 Actividad',
@@ -459,25 +527,27 @@
             const pText = `${horas ? horas + 'h total' : ''}${score ? ' | Score: ' + score + '/100' : ''}`;
             const sText = profundo ? `Sueño Profundo: ${profundo} min` : 'Fases registradas por Zepp';
             parsed.push({
-              date: fecha,
+              date: displayDate,
+              rawDate: fecha,
               type: 'SLEEP',
               badge: 'badge-sleep',
               typeLabel: '💤 Sueño',
               primary: pText || 'Arquitectura de sueño',
               secondary: sText,
-              details: score >= 80 ? 'Excelente recuperación somática y física' : 'Descanso nocturno'
+              details: score >= 80 ? 'Excelente recuperación somática y física' : (notas || 'Descanso nocturno')
             });
           }
 
           // 5. Registro de Biomarcadores / FC
           if (fc !== null && fc > 0) {
             parsed.push({
-              date: fecha,
+              date: displayDate,
+              rawDate: fecha,
               type: 'VITALS',
               badge: 'badge-vitals',
               typeLabel: '❤️ Signos Vitales',
               primary: `FC Reposo: ${fc} lpm`,
-              secondary: 'HRV Promedio: ~105 ms | SpO2: ~98%',
+              secondary: `HRV Promedio: ~${hrvVal} ms | SpO2: ~98%`,
               details: fc <= 50 ? 'Perfil cardiovascular atlético (Bradicardia fisiológica)' : 'Recuperación autonómica'
             });
           }
@@ -527,8 +597,8 @@
       });
 
       filtered.sort((a, b) => {
-        const dateA = new Date(a.date.replace(' ', 'T')).getTime();
-        const dateB = new Date(b.date.replace(' ', 'T')).getTime();
+        const dateA = new Date((a.rawDate || a.date).replace(' ', 'T')).getTime();
+        const dateB = new Date((b.rawDate || b.date).replace(' ', 'T')).getTime();
         return sortDescending ? (dateB - dateA) : (dateA - dateB);
       });
 
